@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Project_HttpTest</string>
+    <string name="hint_account">帳號</string>
+    <string name="hint_password">密碼</string>
+    <string name="test_account">user1223</string>
+    <string name="test_password">12345</string>
+    <string name="btn_login_text">登入</string>
+    <string name="btn_logout_text">登出</string>
+    <string name="btn_renew">更新</string>
+    <string name="txt_hint">瀏覽資料</string>
+    <string name="txt_welcome">歡迎使用 請登入</string>
+    <string name="chk_remember">記住帳號密碼</string>
+    <string name="chk_keep_login">保持登入</string>
+    <string name="chk_service">開啟通知</string>
+</resources>
