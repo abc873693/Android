@@ -3,6 +3,9 @@ package com.rainvisitor.fb_api;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -35,6 +38,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,13 +46,13 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     public ArrayList<PostModule> posts = new ArrayList<>();
-    private CallbackManager callbackManager;
-    private AccessToken accessToken;
-    private String access_token;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private CustomListView listView;
-    private Button loginButton;
-    private final String SharedPrefer_data = "data";
+    public CallbackManager callbackManager;
+    public AccessToken accessToken;
+    public String access_token;
+    public SwipeRefreshLayout swipeRefreshLayout;
+    public CustomListView listView;
+    public Button loginButton;
+    public final String SharedPrefer_data = "data";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +60,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-        CustomAdapter customAdapter = new CustomAdapter();
-        listView.setAdapter(customAdapter);
-        SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
-        access_token = data.getString("Access_token", "");
         Log.d("SharedPreferences", "SharedPreferences access token = " + access_token);
         new AsyncGetPost().execute();
         //宣告callback Manager
@@ -166,7 +166,9 @@ public class MainActivity extends AppCompatActivity {
 
     public class AsyncGetPost extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
-        private String targetURL = "https://graph.facebook.com/656114697817019/posts?summary=true&access_token=" + access_token;
+        SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
+        private String targetURL = "https://graph.facebook.com/656114697817019/posts?fields=story,created_time,picture,message,likes.limit(0).summary(true)&access_token=" ;
+        //https://graph.facebook.com/656114697817019/posts?fields=story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
         private ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
 
         @Override
@@ -179,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             try {
+                access_token = data.getString("Access_token", "");
+                targetURL = targetURL + access_token;
                 // 利用string url构建URL对象
                 URL mURL = new URL(targetURL);
                 conn = (HttpURLConnection) mURL.openConnection();
@@ -212,18 +216,23 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject json_data = new JSONObject(result);
                 JSONArray jsonArray = json_data.getJSONArray("data");
                 for (int i =  0; i <= jsonArray.length() - 1; i++) {
+                    String image_URL;
                     PostModule module = new PostModule();
                     JSONObject dataObject = jsonArray.getJSONObject(i);
-                    module.title = dataObject.optString("id");
+                    //module.title = dataObject.optString("id");
+                    module.title = "私房餐廳";
                     module.date = dataObject.optString("created_time");
                     module.content = dataObject.optString("message");
-                    module.likes = "likes";
+                    module.likes = dataObject.getJSONObject("likes").getJSONObject("summary").optString("total_count") +" likes";
+                    module.image_URL = dataObject.optString("picture");
                     //module.share.setText("share" + i);
-                    //module.image.setImageResource(R.mipmap.ic_launcher);
-                    Log.d("FB JSON Parser", "data "+ i + module.title + " " + module.date + " " + module.content + " ");
+                    //module.image.setImageBitmap(getBitmapFromURL(image_URL));
+                    Log.d("FB JSON Parser", "data "+ i + module.title + " " + module.date + " " + module.content + " " + module.image_URL);
                     posts.add(module);
                 }
                 Log.d("FB JSON Parser", "data size " + posts.size());
+                CustomAdapter customAdapter = new CustomAdapter();
+                listView.setAdapter(customAdapter);
             } catch (Exception e) {
                 Toast.makeText(MainActivity.this, "資料取得失敗!", Toast.LENGTH_LONG).show();
                 Log.e("FB JSON Parser", "Error parsing data " + e.toString());
@@ -233,6 +242,80 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private static Bitmap getBitmapFromURL(String imageUrl)
+    {
+        try
+        {
+            URL url = new URL(imageUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap bitmap = BitmapFactory.decodeStream(input);
+            return bitmap;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+
+        public ImageDownloaderTask(ImageView imageView) {
+            imageViewReference = new WeakReference<ImageView>(imageView);
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            return downloadBitmap(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (isCancelled()) {
+                bitmap = null;
+            }
+
+            if (imageViewReference != null) {
+                ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    if (bitmap != null) {
+                        imageView.setImageBitmap(bitmap);
+                    } else {
+                        Drawable placeholder = imageView.getContext().getResources().getDrawable(R.mipmap.ic_launcher);
+                        imageView.setImageDrawable(placeholder);
+                    }
+                }
+            }
+        }
+    }
+    private Bitmap downloadBitmap(String url) {
+        HttpURLConnection urlConnection = null;
+        try {
+            URL uri = new URL(url);
+            urlConnection = (HttpURLConnection) uri.openConnection();
+            int statusCode = urlConnection.getResponseCode();
+            if (statusCode != 200) {
+                return null;
+            }
+
+            InputStream inputStream = urlConnection.getInputStream();
+            if (inputStream != null) {
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                return bitmap;
+            }
+        } catch (Exception e) {
+            urlConnection.disconnect();
+            Log.w("ImageDownloader", "Error downloading image from " + url);
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return null;
+    }
     private static String getStringFromInputStream(InputStream is)
             throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -287,6 +370,9 @@ public class MainActivity extends AppCompatActivity {
             holder.textView_date.setText(posts.get(position).date);
             holder.textView_content.setText(posts.get(position).content);
             holder.textView_likes.setText(posts.get(position).likes);
+            if (holder.imageView != null) {
+                new ImageDownloaderTask(holder.imageView).execute(posts.get(position).image_URL);
+            }
             //holder.imageView.setImageDrawable(posts.get(position).image.getDrawable());
             return convertView;
         }
