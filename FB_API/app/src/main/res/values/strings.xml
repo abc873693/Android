@@ -2,4 +2,5 @@
     <string name="app_name">FB_API</string>
     <string name="facebook_app_id">1890036781216019</string>
     <string name="login">登入</string>
+    <string name="official_id">656114697817019</string>
 </resources>

@@ -10,11 +10,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -43,6 +44,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public ArrayList<PostModule> posts = new ArrayList<>();
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public AccessToken accessToken;
     public String access_token;
     public SwipeRefreshLayout swipeRefreshLayout;
-    public CustomListView listView;
+    public RecyclerView listView;
     public Button loginButton;
     public final String SharedPrefer_data = "data";
 
@@ -62,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         init();
         Log.d("SharedPreferences", "SharedPreferences access token = " + access_token);
         new AsyncGetPost().execute();
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        listView.setLayoutManager(llm);
         //宣告callback Manager
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -87,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 //accessToken之後或許還會用到 先存起來
                 accessToken = loginResult.getAccessToken();
-
                 Log.d("FB", "access token got. token= " + loginResult.getAccessToken().getToken());
                 SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
                 data.edit()
@@ -101,30 +105,25 @@ public class MainActivity extends AppCompatActivity {
                             //當RESPONSE回來的時候
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
-
                                 //讀出姓名 ID FB個人頁面連結
                                 Log.d("FB", "complete\n" + object);
                                 Log.d("FB", object.optString("name"));
                                 Log.d("FB", object.optString("link"));
                                 Log.d("FB", object.optString("id"));
-
                             }
                         });
-
                 //包入你想要得到的資料 送出request
                 Bundle parameters = new Bundle();
                 parameters.putString("fields", "id,name,link");
                 request.setParameters(parameters);
                 request.executeAsync();
             }
-
             //登入取消
             @Override
             public void onCancel() {
                 // App code
                 Log.d("FB", "CANCEL");
             }
-
             //登入失敗
             @Override
             public void onError(FacebookException exception) {
@@ -132,11 +131,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("FB", exception.toString());
             }
         });
-
     }
 
     private void init() {
-        listView = (CustomListView) findViewById(R.id.listView);
+        listView = (RecyclerView) findViewById(R.id.listView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.red_500, R.color.blue_500);  //設定swipeRefreshLayout更新時,圈圈的顏色
         loginButton = (Button) findViewById(R.id.fb_login);
@@ -151,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
     }
@@ -159,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
     }
@@ -167,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
     public class AsyncGetPost extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
         SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
-        private String targetURL = "https://graph.facebook.com/656114697817019/posts?fields=story,created_time,picture,message,likes.limit(0).summary(true)&access_token=" ;
-        //https://graph.facebook.com/656114697817019/posts?fields=story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
+        private String targetURL = "https://graph.facebook.com/656114697817019/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=" ;
+        //https://graph.facebook.com/656114697817019/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
         private ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
 
         @Override
@@ -210,29 +206,35 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             pdLoading.dismiss();
-            Log.d("data",  result);
+            //Log.d("data",  result);
             try {
                 posts.clear();
                 JSONObject json_data = new JSONObject(result);
                 JSONArray jsonArray = json_data.getJSONArray("data");
                 for (int i =  0; i <= jsonArray.length() - 1; i++) {
-                    String image_URL;
                     PostModule module = new PostModule();
                     JSONObject dataObject = jsonArray.getJSONObject(i);
-                    //module.title = dataObject.optString("id");
+                    module.id = dataObject.optString("id");
                     module.title = "私房餐廳";
-                    module.date = dataObject.optString("created_time");
+                    module.date = dataObject.optString("created_time").substring(0,10);
                     module.content = dataObject.optString("message");
-                    module.likes = dataObject.getJSONObject("likes").getJSONObject("summary").optString("total_count") +" likes";
+                    module.likes = dataObject.getJSONObject("likes").getJSONObject("summary").optString("total_count") +" 喜歡";
+                    //module.shares = dataObject.getJSONObject("shares").optString("count");
+                    /*if(module.shares.isEmpty()){
+                        module.shares = "0";
+                    }*/
+                    module.shares = "0" + " 分享";
                     module.image_URL = dataObject.optString("picture");
-                    //module.share.setText("share" + i);
-                    //module.image.setImageBitmap(getBitmapFromURL(image_URL));
-                    Log.d("FB JSON Parser", "data "+ i + module.title + " " + module.date + " " + module.content + " " + module.image_URL);
+                    module.link_URL = dataObject.optString("permalink_url");
+                    //Log.d("FB JSON Parser", "data "+ i + module.title + " " + module.date + " " + module.content + " " + module.image_URL);
                     posts.add(module);
                 }
                 Log.d("FB JSON Parser", "data size " + posts.size());
-                CustomAdapter customAdapter = new CustomAdapter();
+                ContactAdapter customAdapter = new ContactAdapter(posts);
                 listView.setAdapter(customAdapter);
+                //loginButton.setVisibility(View.INVISIBLE);
+                loginButton.setEnabled(false);
+                loginButton.setText("已登入");
             } catch (Exception e) {
                 Toast.makeText(MainActivity.this, "資料取得失敗!", Toast.LENGTH_LONG).show();
                 Log.e("FB JSON Parser", "Error parsing data " + e.toString());
@@ -242,31 +244,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private static Bitmap getBitmapFromURL(String imageUrl)
-    {
-        try
-        {
-            URL url = new URL(imageUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap bitmap = BitmapFactory.decodeStream(input);
-            return bitmap;
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
     class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
 
         public ImageDownloaderTask(ImageView imageView) {
             imageViewReference = new WeakReference<ImageView>(imageView);
         }
-
         @Override
         protected Bitmap doInBackground(String... params) {
             return downloadBitmap(params[0]);
@@ -330,60 +313,70 @@ public class MainActivity extends AppCompatActivity {
         return state;
     }
 
-    private class CustomAdapter extends BaseAdapter {
 
-        @Override
-        public int getCount() {
-            return posts.size();
+    public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
+
+        private List<PostModule> contactList;
+
+        public ContactAdapter(List<PostModule> contactList) {
+            this.contactList = contactList;
         }
 
         @Override
-        public Object getItem(int position) {
-            return posts.get(position);
+        public int getItemCount() {
+            return contactList.size();
         }
 
         @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-
-            if (convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
-                convertView = inflater.inflate(R.layout.list_fb_posts, parent, false);
-                holder = new ViewHolder();
-                holder.textView_title = (TextView) convertView.findViewById(R.id.textView_title);
-                holder.button_share = (ImageButton) convertView.findViewById(R.id.button_share);
-                holder.textView_date = (TextView) convertView.findViewById(R.id.textView_date);
-                holder.textView_content = (TextView) convertView.findViewById(R.id.textView_content);
-                holder.textView_likes = (TextView) convertView.findViewById(R.id.textView_likes);
-                holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
+        public void onBindViewHolder(ContactViewHolder holder, final int position) {
             holder.textView_title.setText(posts.get(position).title);
             //holder.button_share.setText(posts.get(position).share.getText());
+            holder.button_share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(MainActivity.this, posts.get(position).id, Toast.LENGTH_LONG).show();
+                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    sharingIntent.setType("text/plain");
+                    sharingIntent.putExtra(Intent.EXTRA_TEXT, posts.get(position).link_URL);
+                    startActivity(Intent.createChooser(sharingIntent, "分享至"));
+                }
+            });
             holder.textView_date.setText(posts.get(position).date);
             holder.textView_content.setText(posts.get(position).content);
             holder.textView_likes.setText(posts.get(position).likes);
+            holder.textView_shares.setText(posts.get(position).shares);
             if (holder.imageView != null) {
                 new ImageDownloaderTask(holder.imageView).execute(posts.get(position).image_URL);
             }
             //holder.imageView.setImageDrawable(posts.get(position).image.getDrawable());
-            return convertView;
         }
 
-        class ViewHolder {
+        @Override
+        public ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.list_fb_posts, viewGroup, false);
+            return new ContactViewHolder(itemView);
+        }
+
+        public class ContactViewHolder extends RecyclerView.ViewHolder {
             TextView textView_title;
             ImageButton button_share;
             TextView textView_date;
             TextView textView_content;
             ImageView imageView;
             TextView textView_likes;
+            TextView textView_shares;
+            public ContactViewHolder(View convertView) {
+                super(convertView);
+                textView_title = (TextView) convertView.findViewById(R.id.textView_title);
+                button_share = (ImageButton) convertView.findViewById(R.id.button_share);
+                textView_date = (TextView) convertView.findViewById(R.id.textView_date);
+                textView_content = (TextView) convertView.findViewById(R.id.textView_content);
+                textView_likes = (TextView) convertView.findViewById(R.id.textView_likes);
+                textView_shares = (TextView) convertView.findViewById(R.id.textView_shares);
+                imageView = (ImageView) convertView.findViewById(R.id.imageView);
+            }
         }
     }
 }

@@ -5,12 +5,13 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/grey_100"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin_short"
+    android:paddingRight="@dimen/activity_horizontal_margin_short"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.rainvisitor.fb_api.MainActivity">
+    tools:context="com.rainvisitor.fb_api.MainActivity"
+    >
 
     <Button
         android:layout_width="wrap_content"
@@ -20,12 +21,13 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <com.rainvisitor.fb_api.CustomListView
+        android:layout_height="match_parent"
+        android:background="@color/grey_100">
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/list_fb_posts"
-            />
+            android:background="@color/grey_100"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
