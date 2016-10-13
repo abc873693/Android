@@ -11,7 +11,9 @@ public class PostModule {
     public String content;
     public String likes;
     public String shares;
-    public ImageView image;
-    public String image_URL;
+    public ImageView imageView_post;
+    public ImageView imageView_page;
+    public String image_picture_URL;
+    public String image_page_URL;
     public String link_URL;
 }
