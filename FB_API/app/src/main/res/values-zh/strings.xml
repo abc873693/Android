@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">粉絲專業測試</string>
+    <string name="login">登入</string>
+    <string name="facebook_app_id">1890036781216019</string>
+    <string name="official_id">656114697817019</string>
+</resources>

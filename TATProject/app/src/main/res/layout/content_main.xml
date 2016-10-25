@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/radioGroup"/>
+
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rd_home"
+            style="@style/main_btn_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_menu_camera"
+            android:text="首頁" />
+
+        <RadioButton
+            android:id="@+id/rd_collection"
+            style="@style/main_btn_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_menu_camera"
+            android:text="我的收藏" />
+
+        <RadioButton
+            android:id="@+id/rd_shopping"
+            style="@style/main_btn_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_menu_camera"
+            android:text="購物車" />
+
+        <RadioButton
+            android:id="@+id/rd_search"
+            style="@style/main_btn_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_menu_camera"
+            android:text="搜尋" />
+
+        <RadioButton
+            android:id="@+id/rd_member"
+            style="@style/main_btn_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/ic_menu_camera"
+            android:text="會員專區" />
+    </RadioGroup>
+
+</RelativeLayout>

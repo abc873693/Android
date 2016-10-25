@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="公告區">
+        <menu>
+            <item
+                android:id="@+id/nav_coupon"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="折價卷" />
+            <item
+                android:id="@+id/nav_notice"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="訊息通知與公告" />
+            <item
+                android:id="@+id/nav_record"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="瀏覽紀錄" />
+        </menu>
+    </item>
+
+    <item android:title="主題推薦">
+        <menu>
+            <item
+                android:id="@+id/nav_themes1"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="主題文章1" />
+            <item
+                android:id="@+id/nav_themes2"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="主題文章2" />
+        </menu>
+    </item>
+
+    <item android:title="商品分類">
+        <menu>
+            <item
+                android:id="@+id/nav_product1"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="商品種類1" />
+            <item
+                android:id="@+id/nav_product2"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="商品種類2" />
+            <item
+                android:id="@+id/nav_product3"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="商品種類3" />
+        </menu>
+    </item>
+
+    <item android:title="關於">
+        <menu>
+            <item
+                android:id="@+id/nav_setting"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="設定" />
+        </menu>
+    </item>
+
+</menu>
