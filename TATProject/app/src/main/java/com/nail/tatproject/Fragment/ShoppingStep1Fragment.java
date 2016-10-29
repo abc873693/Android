@@ -165,7 +165,6 @@ public class ShoppingStep1Fragment extends Fragment {
                 ContactAdapter customAdapter = new ContactAdapter(products);
                 listView.setAdapter(customAdapter);
                 Log.d("Product_sum",products.size() + "");
-                //loginButton.setVisibility(View.INVISIBLE);
             } catch (Exception e) {
                 Log.e("FB JSON Parser", "Error parsing data " + e.toString());
                 e.printStackTrace();
@@ -337,7 +336,8 @@ public class ShoppingStep1Fragment extends Fragment {
                 textView_plus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    /*增加的動作*/
+                        int position = getAdapterPosition();
+                        Log.d("position",position + "");
                         int count = products.get(position).count;
                         int max = products.get(position).product_max;
                         products.get(position).count = (count == max)?max:count+1;
@@ -356,6 +356,8 @@ public class ShoppingStep1Fragment extends Fragment {
                 textView_minus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        int position = getAdapterPosition();
+                        Log.d("position",position + "");
                         int count = products.get(position).count;
                         products.get(position).count = (count>1)?count-1:1;
                         textView_count.setText(products.get(position).count + "");
@@ -375,6 +377,8 @@ public class ShoppingStep1Fragment extends Fragment {
                     public void onClick(View v) {
                         if(products.size()==1);
                         else{
+                            int position = getAdapterPosition();
+                            Log.d("position",position + "");
                             sum -= products.get(position).price * products.get(position).count;
                             products_price.setText("$" + String.format("%,d",sum));
                             products_discount.setText("-$" + String.format("%,d",discount));

@@ -90,7 +90,7 @@
                 </FrameLayout>
         <ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,7 +103,6 @@
                 android:background="@color/grey_100"
                 />
                 <!--tools:listitem="@layout/list_product"-->
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -113,7 +112,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/product_total"
                     android:layout_weight="1"
-                    android:gravity="bottom"
+                    android:gravity="center|bottom"
                     tools:text="product_total" />
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -143,7 +142,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingRight="8dp">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
