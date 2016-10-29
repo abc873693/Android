@@ -1,92 +1,176 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingTop="57dp">
-
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:background="@color/grey_100">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/listView_product"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/list_product"
-            android:background="@color/grey_100"
-            android:paddingTop="35dp" />
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="35dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/red_500"
-                android:layout_weight="1" />
-            <TextView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:background="@color/grey_300"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey_300"
-                android:layout_weight="1"/>
-            <TextView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:background="@color/grey_300" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey_300"
-                android:layout_weight="1" />
-        </LinearLayout>
-        <LinearLayout
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/red_500"
+                            android:layout_weight="1" />
+                        <TextView
+                            android:layout_width="10dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/grey_300"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/grey_300"
+                            android:layout_weight="1"/>
+                        <TextView
+                            android:layout_width="10dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/grey_300" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/grey_300"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="確認購物車"
+                            android:background="@color/grey_200"
+                            android:textColor="@color/red_500"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:clickable="true"/>
+                        <TextView
+                            android:layout_width="10dp"
+                            android:layout_height="match_parent"
+                            android:text=">"
+                            android:background="@color/grey_200"
+                            android:textColor="@color/grey_500"
+                            android:gravity="center"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/grey_200"
+                            android:textColor="@color/grey_500"
+                            android:gravity="center"
+                            android:text="付款與運送方式"
+                            android:layout_weight="1"
+                            android:clickable="true"/>
+                        <TextView
+                            android:layout_width="10dp"
+                            android:layout_height="match_parent"
+                            android:text=">"
+                            android:background="@color/grey_200"
+                            android:textColor="@color/grey_500"
+                            android:gravity="center"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/grey_200"
+                            android:textColor="@color/grey_500"
+                            android:gravity="center"
+                            android:text="資料填寫"
+                            android:layout_weight="1"
+                            android:clickable="true"/>
+                    </LinearLayout>
+                </FrameLayout>
+        <ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="30dp">
-            <TextView
+            android:layout_height="match_parent">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="確認購物車"
-                android:background="@color/grey_200"
-                android:textColor="@color/red_500"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:clickable="true"/>
-            <TextView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:text=">"
-                android:background="@color/grey_200"
-                android:textColor="@color/grey_500"
-                android:gravity="center"/>
-            <TextView
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/llm">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/listView_product"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey_200"
-                android:textColor="@color/grey_500"
-                android:gravity="center"
-                android:text="付款與運送方式"
-                android:layout_weight="1"
-                android:clickable="true"/>
-            <TextView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:text=">"
-                android:background="@color/grey_200"
-                android:textColor="@color/grey_500"
-                android:gravity="center"/>
-            <TextView
+                android:layout_height="wrap_content"
+                android:background="@color/grey_100"
+                />
+                <!--tools:listitem="@layout/list_product"-->
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey_200"
-                android:textColor="@color/grey_500"
-                android:gravity="center"
-                android:text="資料填寫"
-                android:layout_weight="1"
-                android:clickable="true"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/product_total"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    tools:text="product_total" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="商品金額小計:" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:text="折價:" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:text="折扣後小計:" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:id="@+id/products_price"
+                        tools:text="product_total" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:id="@+id/products_discount"
+                        tools:text="product_total" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/red_500"
+                        android:textSize="20dp"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:id="@+id/products_total"
+                        tools:text="product_total" />
+                </LinearLayout>
+            </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
         </LinearLayout>
     </FrameLayout>
 </FrameLayout>

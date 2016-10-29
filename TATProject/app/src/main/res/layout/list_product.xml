@@ -18,13 +18,18 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingBottom="10dp">
-            <ImageView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="70dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
                 tools:src="@mipmap/ic_launcher"
-                android:layout_weight="1"
                 android:id="@+id/product_image"
                 />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,11 +48,12 @@
                         tools:text="name"
                         android:textSize="20dp"
                         android:textColor="@color/black"
+
                         android:layout_weight="4"
                         android:id="@+id/product_name"/>
                     <ImageButton
                         android:layout_width="wrap_content"
-                        android:layout_height="30dp"
+                        android:layout_height="25dp"
                         android:src="@drawable/highlight_off_black"
                         android:layout_weight="1"
                         android:id="@+id/product_cancel"/>
@@ -79,16 +85,16 @@
                 android:layout_weight="0"/>-->
                 <TextView
                     android:layout_width="30dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:textColor="@color/grey_300"
                     android:gravity="center"
                     android:text="-"
-                    android:textSize="50dp"
+                    android:textSize="30dp"
                     android:clickable="true"
                     android:id="@+id/product_minus"/>
                 <TextView
                     android:layout_width="50dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="0"
                     android:textColor="@color/black"
                     android:textSize="35dp"
@@ -96,7 +102,7 @@
                     android:id="@+id/product_count"/>
                 <TextView
                     android:layout_width="30dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:textColor="@color/red_500"
                     android:gravity="center"
                     android:text="+"
