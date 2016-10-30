@@ -280,6 +280,7 @@ public class ShoppingStep1Fragment extends Fragment {
         return null;
     }
 
+
     public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
         private List<Product> contactList;
