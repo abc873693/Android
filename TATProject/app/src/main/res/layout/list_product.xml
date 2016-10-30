@@ -53,10 +53,11 @@
                         android:id="@+id/product_name"/>
                     <ImageButton
                         android:layout_width="wrap_content"
-                        android:layout_height="25dp"
-                        android:src="@drawable/highlight_off_black"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_clear_black_24dp"
                         android:layout_weight="1"
-                        android:id="@+id/product_cancel"/>
+                        android:id="@+id/product_cancel"
+                        android:background="@color/white"/>
                 </LinearLayout>
                 <TextView
                     android:layout_width="wrap_content"
