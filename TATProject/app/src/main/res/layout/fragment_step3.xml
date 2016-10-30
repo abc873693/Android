@@ -22,7 +22,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/red_500"
+                        android:background="@color/grey_300"
                         android:layout_weight="1" />
                     <TextView
                         android:layout_width="10dp"
@@ -40,7 +40,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/grey_300"
+                        android:background="@color/red_500"
                         android:layout_weight="1" />
                 </LinearLayout>
                 <LinearLayout
@@ -51,7 +51,7 @@
                         android:layout_height="match_parent"
                         android:text="確認購物車"
                         android:background="@color/grey_200"
-                        android:textColor="@color/red_500"
+                        android:textColor="@color/grey_500"
                         android:gravity="center"
                         android:layout_weight="1"
                         android:clickable="true"/>
@@ -82,13 +82,226 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/grey_200"
-                        android:textColor="@color/grey_500"
+                        android:textColor="@color/red_500"
                         android:gravity="center"
                         android:text="資料填寫"
                         android:layout_weight="1"
                         android:clickable="true"/>
                 </LinearLayout>
             </FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/show_product"
+                android:clickable="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingTop="10dp"
+                        android:gravity="end"
+                        android:textSize="20dp"
+                        android:text="本次消費總計"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:gravity="start"
+                        android:textSize="30dp"
+                        tools:text="$9,500"
+                        android:id="@+id/final_total"
+                        android:textStyle="bold"
+                        android:textColor="@color/red_500"/>
+                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="10dp"
+                    android:gravity="center"
+                    android:textSize="15dp"
+                    android:text="總計 2 項產品  ▽"
+                    android:textStyle="bold"
+                    android:textColor="@color/grey_600"
+                    android:id="@+id/shrink"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/myborder"
+                    android:textSize="10dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/list_porduct"
+                android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="20dp"
+                        android:text="即將擺入CardView"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:textSize="20dp"
+                        android:gravity="end|center_horizontal"
+                        android:text="*  "
+                        android:textStyle="bold"
+                        android:textColor="@color/red_500"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="10"
+                        android:textSize="20dp"
+                        android:gravity="left"
+                        android:text="收件人資訊"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:gravity="end|center_vertical"
+                        android:text="常用收件人   "
+                        android:textColor="@color/blue_600" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/mycircle_2"
+                        android:orientation="vertical">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:background="@drawable/mycircle"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textSize="20dp"
+                                android:textColor="@color/grey_900"
+                                android:text="姓名"/>
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="20dp"
+                                android:hint="輸入中文全名"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:background="@drawable/mycircle"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textSize="20dp"
+                                android:textColor="@color/grey_900"
+                                android:text="手機號碼"/>
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:hint="輸入手機號碼"
+                                android:text="0919983524"
+                                android:maxLines="1"
+                                android:maxLength="10"
+                                android:ellipsize="end"
+                                android:textSize="20dp"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:background="@drawable/mycircle"
+                            android:orientation="horizontal">
+                            <Spinner
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:gravity="center"/>
+                            <Spinner
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:gravity="center"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:background="@drawable/mycircle"
+                            android:orientation="horizontal">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="地址"
+                                android:textSize="20dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="20dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="50dp"
+                        android:paddingRight="50dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:text="完成收件人資訊，請點我輸入信用卡"
+                            android:background="@drawable/mycircle_2"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </FrameLayout>

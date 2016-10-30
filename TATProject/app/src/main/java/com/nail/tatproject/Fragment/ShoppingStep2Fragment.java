@@ -21,6 +21,7 @@ public class ShoppingStep2Fragment extends Fragment {
     private TextView other_option;
     private TextView product_total,products_total,products_ship,products_all;
     private final String ARG_SECTION_NUMBER = "section_number";
+    private int ship;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +54,11 @@ public class ShoppingStep2Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(v.getContext(), "你已經按了其他選項", Toast.LENGTH_LONG).show();
+                SharedPreferences data = getActivity().getSharedPreferences("data",0);
+                ship = 0;
+                data.edit()
+                        .putString("products_ship", ship + "")
+                        .apply();
             }
         });
         SharedPreferences data = getActivity().getSharedPreferences("data",0);
@@ -62,8 +68,8 @@ public class ShoppingStep2Fragment extends Fragment {
         int total = (Integer.valueOf(sum) - Integer.valueOf(discount));
         product_total.setText("共" + count+ "項商品");
         products_total.setText("$" + String.format("%,d",total));
-        products_ship.setText("$" + String.format("%,d",500));
-        products_all.setText("$" + String.format("%,d", total + 500));
+        products_ship.setText("$" + String.format("%,d",ship));
+        products_all.setText("$" + String.format("%,d", total + ship));
         return view;
     }
 
