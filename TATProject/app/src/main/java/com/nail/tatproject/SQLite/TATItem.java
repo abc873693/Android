@@ -33,7 +33,7 @@ public class TATItem {
         return AddTime;
     }
 
-    public int getAddCount() {
+    public int getCount() {
         return Count;
     }
 

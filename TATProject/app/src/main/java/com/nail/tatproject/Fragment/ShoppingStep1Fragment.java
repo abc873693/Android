@@ -45,11 +45,12 @@ public class ShoppingStep1Fragment extends Fragment {
     public static final String Shopping_TABLE_NAME = "Shopping";
     private TATApplication Global;
     private RecyclerView listView;
-    private TextView product_total,products_price,products_discount,products_total;
+    private TextView product_total, products_price, products_discount, products_total;
     private ArrayList<Product> products = new ArrayList<>();
     private ArrayList<TATItem> IDs = new ArrayList<>();
-    private int sum = 0,discount = 0 ;
+    private int sum = 0, discount = 0;
     private final String ARG_SECTION_NUMBER = "section_number";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,15 +69,15 @@ public class ShoppingStep1Fragment extends Fragment {
         //Global.tatdb.sample();
         //listView.setVisibility(View.GONE);
         // 取得所有記事資料
-        for (TATItem item:Global.tatdb.getAll(TATDB.Shopping_TABLE_NAME)) {
-            String  id = item.getProductID();
-            long  addtime = item.getAddTime();
-            int  count = item.getAddCount();
-            Log.d("SQLite date","id=" + id + " addtime" + addtime + " count" + count);
-            IDs.add(new TATItem(id,addtime,count));
+        for (TATItem item : Global.tatdb.getAll(TATDB.Shopping_TABLE_NAME)) {
+            String id = item.getProductID();
+            long addtime = item.getAddTime();
+            int count = item.getCount();
+            Log.d("SQLite date", "id=" + id + " addtime" + addtime + " count" + count);
+            IDs.add(new TATItem(id, addtime, count));
         }
-        for(TATItem i:IDs){
-            new AsyncGetProduct().execute("http://tatvip.ezsale.tw/tat/api/getprod.ashx", i.getProductID() ,i.getAddCount()+"" );
+        for (TATItem i : IDs) {
+            new AsyncGetProduct().execute("http://tatvip.ezsale.tw/tat/api/getprod.ashx", i.getProductID(), i.getCount() + "");
         }
     }
 
@@ -94,17 +95,17 @@ public class ShoppingStep1Fragment extends Fragment {
         //導入Tab分頁的Fragment Layout
         Log.e("ShoppingStep1Fragment", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_step1, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
         listView = (RecyclerView) view.findViewById(R.id.listView_product);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setAutoMeasureEnabled(true);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(llm);
-        product_total = (TextView)view.findViewById(R.id.product_total);
-        products_price = (TextView)view.findViewById(R.id.products_price);
-        products_discount = (TextView)view.findViewById(R.id.products_discount);
-        products_total = (TextView)view.findViewById(R.id.products_total);
+        product_total = (TextView) view.findViewById(R.id.product_total);
+        products_price = (TextView) view.findViewById(R.id.products_price);
+        products_discount = (TextView) view.findViewById(R.id.products_discount);
+        products_total = (TextView) view.findViewById(R.id.products_total);
         listView.setNestedScrollingEnabled(false);
         listView.setHasFixedSize(true);
         return view;
@@ -124,9 +125,10 @@ public class ShoppingStep1Fragment extends Fragment {
     }
 
     public class Items {
-        Items(int newid){
+        Items(int newid) {
             ID = newid;
         }
+
         int ID = 1;
     }
 
@@ -134,6 +136,7 @@ public class ShoppingStep1Fragment extends Fragment {
         //================================================================
         String Reply;
         int receive_count = 1;
+
         @Override
         protected Integer doInBackground(String... param) {
             //get Data 單存取資料
@@ -141,16 +144,16 @@ public class ShoppingStep1Fragment extends Fragment {
             String content = null;
             try {
                 content = "CheckM=" + URLEncoder.encode("286e5560eeac9d7ecb7ecbb6968148c7", "UTF-8");
-                content +="&SiteID="+URLEncoder.encode("778", "UTF-8");
-                content +="&Type="+URLEncoder.encode("4", "UTF-8");
+                content += "&SiteID=" + URLEncoder.encode("778", "UTF-8");
+                content += "&Type=" + URLEncoder.encode("4", "UTF-8");
                 int id = Integer.valueOf(param[1]);
                 receive_count = Integer.valueOf(param[2]);
-                content +="&Items="+gson.toJson(new Items(id));
+                content += "&Items=" + gson.toJson(new Items(id));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 return 0;
             }
-            Reply = makeHttpRequest(param[0],"POST",content);
+            Reply = makeHttpRequest(param[0], "POST", content);
             return 1;
         }
 
@@ -158,45 +161,44 @@ public class ShoppingStep1Fragment extends Fragment {
         protected void onPostExecute(Integer result) {
             //此method是在doInBackground完成以後，才會呼叫的
             super.onPostExecute(result);
-            if(result == 1){
-                Log.d("result",Reply);
-            try {
-                //http://tatex.ezsale.tw/upload/1SP-OK-001(1).JPG
-                JSONObject json_data = new JSONObject(Reply);
-                com.nail.tatproject.moudle.Product module = new com.nail.tatproject.moudle.Product();
-                module.id = json_data.optInt("ID");
-                module.subid = json_data.optInt("SubID");
-                module.image_URL = json_data.optString("Img1");
-                //module.price = json_data.optInt("Value1");
-                module.price = 1500;
-                module.name = json_data.optString("Title");
-                if(!json_data.isNull("Stock")) {
-                    if (json_data.getJSONObject("Stock").has("Num")) {
-                        module.product_max = json_data.getJSONObject("Stock").optInt("Num");
-                    }
-                    else module.product_max = 10;
+            if (result == 1) {
+                Log.d("result", Reply);
+                try {
+                    //http://tatex.ezsale.tw/upload/1SP-OK-001(1).JPG
+                    JSONObject json_data = new JSONObject(Reply);
+                    com.nail.tatproject.moudle.Product module = new com.nail.tatproject.moudle.Product();
+                    module.id = json_data.optInt("ID");
+                    module.subid = json_data.optInt("SubID");
+                    module.image_URL = json_data.optString("Img1");
+                    //module.price = json_data.optInt("Value1");
+                    module.price = 1500;
+                    module.name = json_data.optString("Title");
+                    if (!json_data.isNull("Stock")) {
+                        if (json_data.getJSONObject("Stock").has("Num")) {
+                            module.product_max = json_data.getJSONObject("Stock").optInt("Num");
+                        } else module.product_max = 10;
+                    } else module.product_max = 10;
+                    module.type = module.id + "";
+                    module.count = receive_count;
+                    products.add(module);
+                    product_total.setText("共" + products.size() + "項商品");
+                    sum += (module.price * module.count);
+                    Log.d("Product", "ID=" + module.id + " SubID=" + module.subid + " URL=" + module.image_URL + " price=" + module.price + " count=" + module.count + " max=" + module.product_max);
+                    ContactAdapter customAdapter = new ContactAdapter(products);
+                    listView.setAdapter(customAdapter);
+                    LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+                    llm.setAutoMeasureEnabled(true);
+                    llm.setOrientation(LinearLayoutManager.VERTICAL);
+                    listView.setLayoutManager(llm);
+                    total_update();
+                    total_save();
+                } catch (Exception e) {
+                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    e.printStackTrace();
                 }
-                else module.product_max = 10;
-                module.type = module.id + "";
-                module.count = receive_count;
-                products.add(module);
-                product_total.setText("共" + products.size() + "項商品");
-                sum += (module.price * module.count );
-                Log.d("Product", "ID=" + module.id +" SubID=" + module.subid +" URL=" + module.image_URL +" price=" + module.price+" count=" + module.count  + " max=" + module.product_max);
-                ContactAdapter customAdapter = new ContactAdapter(products);
-                listView.setAdapter(customAdapter);
-                LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-                llm.setAutoMeasureEnabled(true);
-                llm.setOrientation(LinearLayoutManager.VERTICAL);
-                listView.setLayoutManager(llm);
-                total_update();
-                total_save();
-            } catch (Exception e) {
-                Log.e("JSON Parser", "Error parsing data " + e.toString());
-                e.printStackTrace();
-            }
             }
         }
+
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
@@ -209,12 +211,12 @@ public class ShoppingStep1Fragment extends Fragment {
         //=============================================================
     }
 
-    public String makeHttpRequest(String temp_url, String method, String urlParameters){
+    public String makeHttpRequest(String temp_url, String method, String urlParameters) {
         HttpURLConnection conn = null;
-        try{
+        try {
             // 建立連線
-            URL url =new URL(temp_url);
-            conn = (HttpURLConnection)url.openConnection();
+            URL url = new URL(temp_url);
+            conn = (HttpURLConnection) url.openConnection();
             //===============================
             conn.setDoOutput(true);
             // Read from the connection. Default is true.
@@ -226,7 +228,7 @@ public class ShoppingStep1Fragment extends Fragment {
             conn.setUseCaches(false);
             conn.setInstanceFollowRedirects(true);
 
-            conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             //Send request
             DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
@@ -239,14 +241,14 @@ public class ShoppingStep1Fragment extends Fragment {
             String line;
             StringBuffer sb = new StringBuffer();
 
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
             }
             reader.close();
             return sb.toString();
-        }catch (Exception e) {
-            System.out.println("makeHttpRequest Error:"+e.toString());
-        }finally {
+        } catch (Exception e) {
+            System.out.println("makeHttpRequest Error:" + e.toString());
+        } finally {
             if (conn != null) {
                 conn.disconnect();
             }
@@ -260,6 +262,7 @@ public class ShoppingStep1Fragment extends Fragment {
         public ImageDownloaderTask(ImageView imageView) {
             imageViewReference = new WeakReference<ImageView>(imageView);
         }
+
         @Override
         protected Bitmap doInBackground(String... params) {
             return downloadBitmap(params[0]);
@@ -282,6 +285,7 @@ public class ShoppingStep1Fragment extends Fragment {
             }
         }
     }
+
     private Bitmap downloadBitmap(String url) {
         HttpURLConnection urlConnection = null;
         try {
@@ -318,20 +322,25 @@ public class ShoppingStep1Fragment extends Fragment {
         public int getItemCount() {
             return contactList.size();
         }
+
         @Override
         public void onBindViewHolder(ContactViewHolder holder, final int position) {
             holder.textView_name.setText(products.get(position).name);
             holder.textView_type.setText(products.get(position).type);
-            String price = "$" +  String.format("%,d", products.get(position).price * products.get(position).count );
+            String price = "$" + String.format("%,d", products.get(position).price * products.get(position).count);
             holder.textView_count.setText(products.get(position).count + "");
             int count = products.get(position).count;
-            if(count>1)holder.textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
-            else holder.textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
-            if(count == products.get(position).product_max )holder.textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
-            else holder.textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
-            holder.textView_price.setText( price );
+            if (count > 1)
+                holder.textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
+            else
+                holder.textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
+            if (count == products.get(position).product_max)
+                holder.textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
+            else
+                holder.textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
+            holder.textView_price.setText(price);
             if (holder.imageView_product != null) {
-                if(products.get(position).image_URL != null){
+                if (products.get(position).image_URL != null) {
                     new ImageDownloaderTask(holder.imageView_product).execute(products.get(position).image_URL);
                 }
             }
@@ -342,7 +351,7 @@ public class ShoppingStep1Fragment extends Fragment {
             View itemView = LayoutInflater.
                     from(viewGroup.getContext()).
                     inflate(R.layout.list_product, viewGroup, false);
-            return new ContactViewHolder(itemView,i);
+            return new ContactViewHolder(itemView, i);
         }
 
         public class ContactViewHolder extends RecyclerView.ViewHolder {
@@ -355,7 +364,7 @@ public class ShoppingStep1Fragment extends Fragment {
             TextView textView_minus;
             ImageButton button_cancel;
 
-            public ContactViewHolder(View convertView,final int position) {
+            public ContactViewHolder(View convertView, final int position) {
                 super(convertView);
                 imageView_product = (ImageView) convertView.findViewById(R.id.product_image);
                 textView_name = (TextView) convertView.findViewById(R.id.product_name);
@@ -371,22 +380,23 @@ public class ShoppingStep1Fragment extends Fragment {
                         int position = getAdapterPosition();
                         int max = products.get(position).product_max;
                         int count = products.get(position).count;
-                        if(count == max){
+                        if (count == max) {
                             count = max;
-                        }
-                        else {
+                        } else {
                             count++;
-                            sum +=  products.get(position).price;
+                            sum += products.get(position).price;
                         }
-                        if(count>1)textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
-                        if(count == max )textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
+                        if (count > 1)
+                            textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
+                        if (count == max)
+                            textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
                         products.get(position).count = count;
                         textView_count.setText(products.get(position).count + "");
-                        textView_price.setText("$" +  String.format("%,d", products.get(position).price * products.get(position).count ));
-                        Global.tatdb.update(Shopping_TABLE_NAME,new TATItem(IDs.get(position).getProductID(),IDs.get(position).getAddTime(),count));
+                        textView_price.setText("$" + String.format("%,d", products.get(position).price * products.get(position).count));
+                        Global.tatdb.update(Shopping_TABLE_NAME, new TATItem(IDs.get(position).getProductID(), IDs.get(position).getAddTime(), count));
                         total_update();
                         total_save();
-                        Log.d("product","position= " +  position + " sum= " + sum);
+                        Log.d("product", "position= " + position + " sum= " + sum);
                     }
                 });
                 textView_minus.setOnClickListener(new View.OnClickListener() {
@@ -395,31 +405,32 @@ public class ShoppingStep1Fragment extends Fragment {
                         int position = getAdapterPosition();
                         int max = products.get(position).product_max;
                         int count = products.get(position).count;
-                        if(count>1){
+                        if (count > 1) {
                             count--;
                             sum -= products.get(position).price;
-                        }
-                        else {
+                        } else {
                             count = 1;
                         }
-                        if(count < max )textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
-                        if(count == 1)textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
+                        if (count < max)
+                            textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
+                        if (count == 1)
+                            textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
                         products.get(position).count = count;
                         textView_count.setText(products.get(position).count + "");
-                        textView_price.setText("$" +  String.format("%,d", products.get(position).price * products.get(position).count ));
-                        Global.tatdb.update(Shopping_TABLE_NAME,new TATItem(IDs.get(position).getProductID(),IDs.get(position).getAddTime(),count));
+                        textView_price.setText("$" + String.format("%,d", products.get(position).price * products.get(position).count));
+                        Global.tatdb.update(Shopping_TABLE_NAME, new TATItem(IDs.get(position).getProductID(), IDs.get(position).getAddTime(), count));
                         total_update();
                         total_save();
-                        Log.d("product","position= " +  position + " sum= " + sum);
+                        Log.d("product", "position= " + position + " sum= " + sum);
                     }
                 });
                 button_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(products.size()==1);
-                        else{
+                        if (products.size() == 1) ;
+                        else {
                             int position = getAdapterPosition();
-                            Log.d("position",position + "");
+                            Log.d("position", position + "");
                             //刪除SQLlite資料
                             Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
                             sum -= products.get(position).price * products.get(position).count;
@@ -435,6 +446,7 @@ public class ShoppingStep1Fragment extends Fragment {
                     }
                 });
             }
+
             public void removeAt(int position) {
                 products.remove(position);
                 IDs.remove(position);
@@ -443,13 +455,15 @@ public class ShoppingStep1Fragment extends Fragment {
             }
         }
     }
-    private void total_update(){
-        products_price.setText("$" + String.format("%,d",sum));
-        products_discount.setText("-$" + String.format("%,d",discount));
-        products_total.setText("$" + String.format("%,d",sum - discount));
+
+    private void total_update() {
+        products_price.setText("$" + String.format("%,d", sum));
+        products_discount.setText("-$" + String.format("%,d", discount));
+        products_total.setText("$" + String.format("%,d", sum - discount));
     }
-    private void total_save(){
-        SharedPreferences data = getActivity().getSharedPreferences("data",0);
+
+    private void total_save() {
+        SharedPreferences data = getActivity().getSharedPreferences("data", 0);
         data.edit()
                 .putString("products_sum", sum + "")
                 .putString("products_discount", discount + "")

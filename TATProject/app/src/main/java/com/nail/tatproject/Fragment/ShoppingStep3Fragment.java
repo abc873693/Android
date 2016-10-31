@@ -36,34 +36,39 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by 70J on 2016/6/17.
  */
 public class ShoppingStep3Fragment extends Fragment {
-    private LinearLayout show_product,list_product;
-    private TextView shrink , final_total;
-    private TextView products_sum,products_discount,products_ship,products_total,products_count;
+    private LinearLayout list_product,show_product;
+    private TextView shrink, final_total;
+    private TextView products_sum, products_discount, products_ship, products_total, products_count;
     private final String ARG_SECTION_NUMBER = "section_number";
     private String count;
     private TATApplication Global;
     private RecyclerView listView;
     private ArrayList<Product> products = new ArrayList<>();
     private ArrayList<TATItem> IDs = new ArrayList<>();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("ShoppingStep3Fragment", "onCreate");
         setRetainInstance(true);
-        for (TATItem item:Global.tatdb.getAll(TATDB.Shopping_TABLE_NAME)) {
-            String  id = item.getProductID();
-            long  addtime = item.getAddTime();
-            int  count = item.getAddCount();
-            Log.d("SQLite date","id=" + id + " addtime" + addtime + " count" + count);
-            IDs.add(new TATItem(id,addtime,count));
+        products.clear();
+        IDs.clear();
+        Global = (TATApplication) getActivity().getApplicationContext();
+        for (TATItem item : Global.tatdb.getAll(TATDB.Shopping_TABLE_NAME)) {
+            String id = item.getProductID();
+            long addtime = item.getAddTime();
+            int count = item.getCount();
+            Log.d("SQLite date", "id=" + id + " addtime" + addtime + " count" + count);
+            IDs.add(new TATItem(id, addtime, count));
         }
-        for(TATItem i:IDs){
-            new AsyncGetProduct().execute("http://tatvip.ezsale.tw/tat/api/getprod.ashx", i.getProductID() ,i.getAddCount()+"" );
+        for (TATItem i : IDs) {
+            new AsyncGetProduct().execute("http://tatvip.ezsale.tw/tat/api/getprod.ashx", i.getProductID(), i.getCount() + "");
         }
     }
 
@@ -81,39 +86,39 @@ public class ShoppingStep3Fragment extends Fragment {
         //導入Tab分頁的Fragment Layout
         Log.e("ShoppingStep3Fragment", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_step3, container, false);
-        ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        show_product=(LinearLayout) view.findViewById(R.id.show_product);
-        list_product=(LinearLayout) view.findViewById(R.id.list_porduct);
-        shrink=(TextView) view.findViewById(R.id.shrink) ;
-        final_total = (TextView)view.findViewById(R.id.final_total);
-        products_sum = (TextView)view.findViewById(R.id.products_sum);
-        products_discount = (TextView)view.findViewById(R.id.products_discount);
-        products_ship = (TextView)view.findViewById(R.id.products_ship);
-        products_total = (TextView)view.findViewById(R.id.products_total);
-        products_count =  (TextView)view.findViewById(R.id.products_count);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        list_product = (LinearLayout) view.findViewById(R.id.list_porduct);
+        show_product = (LinearLayout) view.findViewById(R.id.show_product);
+        shrink = (TextView) view.findViewById(R.id.shrink);
+        final_total = (TextView) view.findViewById(R.id.final_total);
+        products_sum = (TextView) view.findViewById(R.id.products_sum);
+        products_discount = (TextView) view.findViewById(R.id.products_discount);
+        products_ship = (TextView) view.findViewById(R.id.products_ship);
+        products_total = (TextView) view.findViewById(R.id.products_total);
+        products_count = (TextView) view.findViewById(R.id.products_count);
         listView = (RecyclerView) view.findViewById(R.id.listView_product);
-        SharedPreferences data = getActivity().getSharedPreferences("data",0);
+        SharedPreferences data = getActivity().getSharedPreferences("data", 0);
         count = data.getString("products_count", null);
         int sum = Integer.valueOf(data.getString("products_sum", null));
         int discount = Integer.valueOf(data.getString("products_discount", null));
         int ship = Integer.valueOf(data.getString("products_ship", null));
-        int SUM = sum- discount + discount;
-        final_total.setText("$" + String.format("%,d",SUM));
+        int SUM = sum - discount + discount;
+        final_total.setText("$" + String.format("%,d", SUM));
         products_sum.setText("$" + sum);
         products_discount.setText("-$" + discount);
         products_ship.setText("$" + ship);
-        products_total.setText("$" + String.format("%,d",SUM));
+        products_total.setText("$" + String.format("%,d", SUM));
         products_count.setText("共" + count + "項商品，總計");
         list_product.setVisibility(View.GONE);
-        shrink.setOnClickListener(new View.OnClickListener() {
+        shrink.setText("總計 " + count + " 項產品  ▽");
+        show_product.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if( list_product.getVisibility()==View.VISIBLE) {
+                if (list_product.getVisibility() == View.VISIBLE) {
                     list_product.setVisibility(View.GONE);
                     shrink.setText("總計 " + count + " 項產品  ▽");
-                }
-                else {
+                } else {
                     list_product.setVisibility(View.VISIBLE);
                     shrink.setText("總計 " + count + " 項產品  △");
                 }
@@ -135,9 +140,10 @@ public class ShoppingStep3Fragment extends Fragment {
     }
 
     public class Items {
-        Items(int newid){
+        Items(int newid) {
             ID = newid;
         }
+
         int ID = 1;
     }
 
@@ -145,6 +151,7 @@ public class ShoppingStep3Fragment extends Fragment {
         //================================================================
         String Reply;
         int receive_count = 1;
+
         @Override
         protected Integer doInBackground(String... param) {
             //get Data 單存取資料
@@ -152,16 +159,16 @@ public class ShoppingStep3Fragment extends Fragment {
             String content = null;
             try {
                 content = "CheckM=" + URLEncoder.encode("286e5560eeac9d7ecb7ecbb6968148c7", "UTF-8");
-                content +="&SiteID="+URLEncoder.encode("778", "UTF-8");
-                content +="&Type="+URLEncoder.encode("4", "UTF-8");
+                content += "&SiteID=" + URLEncoder.encode("778", "UTF-8");
+                content += "&Type=" + URLEncoder.encode("4", "UTF-8");
                 int id = Integer.valueOf(param[1]);
                 receive_count = Integer.valueOf(param[2]);
-                content +="&Items="+gson.toJson(new Items(id));
+                content += "&Items=" + gson.toJson(new Items(id));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 return 0;
             }
-            Reply = makeHttpRequest(param[0],"POST",content);
+            Reply = makeHttpRequest(param[0], "POST", content);
             return 1;
         }
 
@@ -169,8 +176,8 @@ public class ShoppingStep3Fragment extends Fragment {
         protected void onPostExecute(Integer result) {
             //此method是在doInBackground完成以後，才會呼叫的
             super.onPostExecute(result);
-            if(result == 1){
-                Log.d("result",Reply);
+            if (result == 1) {
+                Log.d("result", Reply);
                 try {
                     //http://tatex.ezsale.tw/upload/1SP-OK-001(1).JPG
                     JSONObject json_data = new JSONObject(Reply);
@@ -181,19 +188,17 @@ public class ShoppingStep3Fragment extends Fragment {
                     //module.price = json_data.optInt("Value1");
                     module.price = 1500;
                     module.name = json_data.optString("Title");
-                    if(!json_data.isNull("Stock")) {
+                    if (!json_data.isNull("Stock")) {
                         if (json_data.getJSONObject("Stock").has("Num")) {
                             module.product_max = json_data.getJSONObject("Stock").optInt("Num");
-                        }
-                        else module.product_max = 10;
-                    }
-                    else module.product_max = 10;
+                        } else module.product_max = 10;
+                    } else module.product_max = 10;
                     module.type = module.id + "";
                     module.count = receive_count;
                     products.add(module);
-                    Log.d("Product", "ID=" + module.id +" SubID=" + module.subid +" URL=" + module.image_URL +" price=" + module.price+" count=" + module.count  + " max=" + module.product_max);
-                    /*ContactAdapter customAdapter = new ContactAdapter(products);
-                    listView.setAdapter(customAdapter);*/
+                    Log.d("Product", "ID=" + module.id + " SubID=" + module.subid + " URL=" + module.image_URL + " price=" + module.price + " count=" + module.count + " max=" + module.product_max);
+                    ContactAdapter customAdapter = new ContactAdapter(products);
+                    listView.setAdapter(customAdapter);
                     LinearLayoutManager llm = new LinearLayoutManager(getActivity());
                     llm.setAutoMeasureEnabled(true);
                     llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -204,6 +209,7 @@ public class ShoppingStep3Fragment extends Fragment {
                 }
             }
         }
+
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
@@ -216,12 +222,12 @@ public class ShoppingStep3Fragment extends Fragment {
         //=============================================================
     }
 
-    public String makeHttpRequest(String temp_url, String method, String urlParameters){
+    public String makeHttpRequest(String temp_url, String method, String urlParameters) {
         HttpURLConnection conn = null;
-        try{
+        try {
             // 建立連線
-            URL url =new URL(temp_url);
-            conn = (HttpURLConnection)url.openConnection();
+            URL url = new URL(temp_url);
+            conn = (HttpURLConnection) url.openConnection();
             //===============================
             conn.setDoOutput(true);
             // Read from the connection. Default is true.
@@ -233,7 +239,7 @@ public class ShoppingStep3Fragment extends Fragment {
             conn.setUseCaches(false);
             conn.setInstanceFollowRedirects(true);
 
-            conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             //Send request
             DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
@@ -246,14 +252,14 @@ public class ShoppingStep3Fragment extends Fragment {
             String line;
             StringBuffer sb = new StringBuffer();
 
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
             }
             reader.close();
             return sb.toString();
-        }catch (Exception e) {
-            System.out.println("makeHttpRequest Error:"+e.toString());
-        }finally {
+        } catch (Exception e) {
+            System.out.println("makeHttpRequest Error:" + e.toString());
+        } finally {
             if (conn != null) {
                 conn.disconnect();
             }
@@ -267,6 +273,7 @@ public class ShoppingStep3Fragment extends Fragment {
         public ImageDownloaderTask(ImageView imageView) {
             imageViewReference = new WeakReference<ImageView>(imageView);
         }
+
         @Override
         protected Bitmap doInBackground(String... params) {
             return downloadBitmap(params[0]);
@@ -289,6 +296,7 @@ public class ShoppingStep3Fragment extends Fragment {
             }
         }
     }
+
     private Bitmap downloadBitmap(String url) {
         HttpURLConnection urlConnection = null;
         try {
@@ -311,5 +319,58 @@ public class ShoppingStep3Fragment extends Fragment {
             }
         }
         return null;
+    }
+
+    public class ContactAdapter extends RecyclerView.Adapter<ShoppingStep3Fragment.ContactAdapter.ContactViewHolder> {
+
+        private List<Product> contactList;
+
+        public ContactAdapter(List<com.nail.tatproject.moudle.Product> contactList) {
+            this.contactList = contactList;
+        }
+
+        @Override
+        public int getItemCount() {
+            return contactList.size();
+        }
+
+        @Override
+        public void onBindViewHolder(ShoppingStep3Fragment.ContactAdapter.ContactViewHolder holder, final int position) {
+            holder.textView_name.setText(products.get(position).name);
+            holder.textView_type.setText(products.get(position).type);
+            String price = "$" + String.format("%,d", products.get(position).price * products.get(position).count);
+            holder.textView_count.setText("X " + products.get(position).count);
+            holder.textView_price.setText(price);
+            if (holder.imageView_product != null) {
+                if (products.get(position).image_URL != null) {
+                    new ShoppingStep3Fragment.ImageDownloaderTask(holder.imageView_product).execute(products.get(position).image_URL);
+                }
+            }
+        }
+
+        @Override
+        public ShoppingStep3Fragment.ContactAdapter.ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.list_product_simple, viewGroup, false);
+            return new ShoppingStep3Fragment.ContactAdapter.ContactViewHolder(itemView, i);
+        }
+
+        public class ContactViewHolder extends RecyclerView.ViewHolder {
+            ImageView imageView_product;
+            TextView textView_name;
+            TextView textView_type;
+            TextView textView_count;
+            TextView textView_price;
+
+            public ContactViewHolder(View convertView, final int position) {
+                super(convertView);
+                imageView_product = (ImageView) convertView.findViewById(R.id.product_image);
+                textView_name = (TextView) convertView.findViewById(R.id.product_name);
+                textView_type = (TextView) convertView.findViewById(R.id.product_type);
+                textView_count = (TextView) convertView.findViewById(R.id.product_count);
+                textView_price = (TextView) convertView.findViewById(R.id.product_price);
+            }
+        }
     }
 }
