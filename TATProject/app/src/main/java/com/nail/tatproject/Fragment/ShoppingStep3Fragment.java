@@ -80,7 +80,7 @@ public class ShoppingStep3Fragment extends Fragment {
             new AsyncGetProduct().execute("http://tatvip.ezsale.tw/tat/api/getprod.ashx", i.getProductID(), i.getCount() + "");
         }
         String str = getResources().getString(R.string.source);
-        Log.d("Source", str);
+        //Log.d("Source", str);
         try {
             JSONObject taiwan = new JSONObject(str);
             Iterator keys = taiwan.keys();
@@ -153,6 +153,8 @@ public class ShoppingStep3Fragment extends Fragment {
         int discount = Integer.valueOf(data.getString("products_discount", null));
         int ship = Integer.valueOf(data.getString("products_ship", null));
         int SUM = sum - discount + discount;
+        listView.setNestedScrollingEnabled(false);
+        listView.setHasFixedSize(true);
         final_total.setText("$" + String.format("%,d", SUM));
         products_sum.setText("$" + sum);
         products_discount.setText("-$" + discount);

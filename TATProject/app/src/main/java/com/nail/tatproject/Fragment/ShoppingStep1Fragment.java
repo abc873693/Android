@@ -435,10 +435,6 @@ public class ShoppingStep1Fragment extends Fragment {
                             Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
                             sum -= products.get(position).price * products.get(position).count;
                             removeAt(position);
-                            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-                            llm.setAutoMeasureEnabled(true);
-                            llm.setOrientation(LinearLayoutManager.VERTICAL);
-                            listView.setLayoutManager(llm);
                             total_update();
                             total_save();
                         }

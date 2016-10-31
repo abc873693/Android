@@ -173,19 +173,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical">
-
-                            <android.support.v7.widget.RecyclerView
-                                android:id="@+id/listView_product"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@color/grey_100"
-                                tools:listitem="@layout/list_product_simple"/>
+                                android:layout_height="wrap_content">
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/listView_product"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/grey_100"
+                                    tools:listitem="@layout/list_product_simple"/>
+                            </RelativeLayout>
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -193,7 +196,6 @@
                                 android:paddingBottom="15dp"
                                 android:paddingRight="20dp"
                                 android:paddingTop="10dp">
-
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -362,8 +364,10 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_weight="1"
+                                        android:paddingLeft="5dp"
                                         android:hint="輸入中文全名"
-                                        android:textSize="20dp" />
+                                        android:textSize="20dp"
+                                        android:background="@null"/>
                                 </LinearLayout>
 
                                 <LinearLayout
@@ -380,18 +384,21 @@
                                         android:gravity="center"
                                         android:text="手機號碼"
                                         android:textColor="@color/grey_900"
-                                        android:textSize="20dp" />
+                                        android:textSize="20dp"
+                                        android:background="@null"/>
 
                                     <EditText
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_weight="1"
                                         android:ellipsize="end"
+                                        android:inputType="number"
                                         android:hint="輸入手機號碼"
                                         android:maxLength="10"
                                         android:maxLines="1"
-                                        android:text="0919983524"
-                                        android:textSize="20dp" />
+                                        android:textSize="20dp"
+                                        android:paddingLeft="5dp"
+                                        android:background="@null"/>
                                 </LinearLayout>
 
                                 <LinearLayout
@@ -426,10 +433,12 @@
 
                                     <EditText
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="match_parent"
                                         android:layout_weight="1"
                                         android:hint="地址"
-                                        android:textSize="20dp" />
+                                        android:textSize="20dp"
+                                        android:gravity="center"
+                                        android:background="@null"/>
                                 </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
