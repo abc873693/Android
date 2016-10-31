@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -39,14 +38,11 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.max;
-
 /**
  * Created by 70J on 2016/6/17.
  */
 public class ShoppingStep1Fragment extends Fragment {
     public static final String Shopping_TABLE_NAME = "Shopping";
-    private  LinearLayout llm;
     private TATApplication Global;
     private RecyclerView listView;
     private TextView product_total,products_price,products_discount,products_total;
@@ -101,17 +97,16 @@ public class ShoppingStep1Fragment extends Fragment {
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
         listView = (RecyclerView) view.findViewById(R.id.listView_product);
-        LinearLayoutManager layoutmanage = new LinearLayoutManager(getActivity());
-        layoutmanage.setAutoMeasureEnabled(true);
-        layoutmanage.setOrientation(LinearLayoutManager.VERTICAL);
-        listView.setLayoutManager(layoutmanage);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setAutoMeasureEnabled(true);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        listView.setLayoutManager(llm);
         product_total = (TextView)view.findViewById(R.id.product_total);
         products_price = (TextView)view.findViewById(R.id.products_price);
         products_discount = (TextView)view.findViewById(R.id.products_discount);
         products_total = (TextView)view.findViewById(R.id.products_total);
         listView.setNestedScrollingEnabled(false);
         listView.setHasFixedSize(true);
-        llm = (LinearLayout) view.findViewById(R.id.llm);
         return view;
     }
 
@@ -134,7 +129,6 @@ public class ShoppingStep1Fragment extends Fragment {
         }
         int ID = 1;
     }
-
 
     class AsyncGetProduct extends AsyncTask<String, Integer, Integer> {
         //================================================================
@@ -188,25 +182,17 @@ public class ShoppingStep1Fragment extends Fragment {
                 products.add(module);
                 product_total.setText("共" + products.size() + "項商品");
                 sum += (module.price * module.count );
-                products_price.setText("$" + String.format("%,d",sum));
-                products_discount.setText("-$" + String.format("%,d",discount));
-                products_total.setText("$" + String.format("%,d",sum - discount));
                 Log.d("Product", "ID=" + module.id +" SubID=" + module.subid +" URL=" + module.image_URL +" price=" + module.price+" count=" + module.count  + " max=" + module.product_max);
                 ContactAdapter customAdapter = new ContactAdapter(products);
                 listView.setAdapter(customAdapter);
-                Log.d("Product_sum",products.size() + "");
-                LinearLayoutManager layoutmanage = new LinearLayoutManager(getActivity());
-                layoutmanage.setAutoMeasureEnabled(true);
-                layoutmanage.setOrientation(LinearLayoutManager.VERTICAL);
-                listView.setLayoutManager(layoutmanage);
-                SharedPreferences data = getActivity().getSharedPreferences("data",0);
-                data.edit()
-                        .putString("products_sum", sum + "")
-                        .putString("products_discount", discount + "")
-                        .putString("products_count", products.size() + "")
-                        .apply();
+                LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+                llm.setAutoMeasureEnabled(true);
+                llm.setOrientation(LinearLayoutManager.VERTICAL);
+                listView.setLayoutManager(llm);
+                total_update();
+                total_save();
             } catch (Exception e) {
-                Log.e("FB JSON Parser", "Error parsing data " + e.toString());
+                Log.e("JSON Parser", "Error parsing data " + e.toString());
                 e.printStackTrace();
             }
             }
@@ -368,19 +354,6 @@ public class ShoppingStep1Fragment extends Fragment {
             TextView textView_plus;
             TextView textView_minus;
             ImageButton button_cancel;
-            public void setVisibility(boolean isVisible){
-                RecyclerView.LayoutParams param = (RecyclerView.LayoutParams)itemView.getLayoutParams();
-                if (isVisible){
-                    param.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                    param.width = LinearLayout.LayoutParams.MATCH_PARENT;
-                    itemView.setVisibility(View.VISIBLE);
-                }else{
-                    itemView.setVisibility(View.GONE);
-                    param.height = 0;
-                    param.width = 0;
-                }
-                itemView.setLayoutParams(param);
-            }
 
             public ContactViewHolder(View convertView,final int position) {
                 super(convertView);
@@ -396,53 +369,48 @@ public class ShoppingStep1Fragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         int position = getAdapterPosition();
-                        Log.d("position",position + "");
-                        int count = products.get(position).count;
                         int max = products.get(position).product_max;
-                        products.get(position).count = (count == max)?max:count+1;
-                        count = products.get(position).count;
-                        textView_count.setText(products.get(position).count + "");
-                        String price = "$" +  String.format("%,d", products.get(position).price * products.get(position).count );
-                        textView_price.setText(price);
+                        int count = products.get(position).count;
+                        if(count == max){
+                            count = max;
+                        }
+                        else {
+                            count++;
+                            sum +=  products.get(position).price;
+                        }
                         if(count>1)textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
                         if(count == max )textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
-                        sum += (count == max)?0: products.get(position).price;
-                        products_price.setText("$" + String.format("%,d",sum));
-                        products_discount.setText("-$" + String.format("%,d",discount));
-                        products_total.setText("$" + String.format("%,d",sum - discount));
+                        products.get(position).count = count;
+                        textView_count.setText(products.get(position).count + "");
+                        textView_price.setText("$" +  String.format("%,d", products.get(position).price * products.get(position).count ));
                         Global.tatdb.update(Shopping_TABLE_NAME,new TATItem(IDs.get(position).getProductID(),IDs.get(position).getAddTime(),count));
-                        SharedPreferences data = getActivity().getSharedPreferences("data",0);
-                        data.edit()
-                                .putString("products_sum", sum + "")
-                                .putString("products_discount", discount + "")
-                                .putString("products_count", products.size() + "")
-                                .apply();
+                        total_update();
+                        total_save();
+                        Log.d("product","position= " +  position + " sum= " + sum);
                     }
                 });
                 textView_minus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         int position = getAdapterPosition();
-                        Log.d("position",position + "");
+                        int max = products.get(position).product_max;
                         int count = products.get(position).count;
-                        products.get(position).count = (count>1)?count-1:1;
-                        textView_count.setText(products.get(position).count + "");
-                        count = products.get(position).count;
-                        String price = "$" +  String.format("%,d", products.get(position).price * products.get(position).count );
-                        textView_price.setText(price);
-                        if(count == 1)textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
+                        if(count>1){
+                            count--;
+                            sum -= products.get(position).price;
+                        }
+                        else {
+                            count = 1;
+                        }
                         if(count < max )textView_plus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.red_500));
-                        sum -= (count>1)?products.get(position).price:0;
-                        products_price.setText("$" + String.format("%,d",sum));
-                        products_discount.setText("-$" + String.format("%,d",discount));
-                        products_total.setText("$" + String.format("%,d",sum - discount));
+                        if(count == 1)textView_minus.setTextColor(ShoppingStep1Fragment.this.getResources().getColor(R.color.grey_500));
+                        products.get(position).count = count;
+                        textView_count.setText(products.get(position).count + "");
+                        textView_price.setText("$" +  String.format("%,d", products.get(position).price * products.get(position).count ));
                         Global.tatdb.update(Shopping_TABLE_NAME,new TATItem(IDs.get(position).getProductID(),IDs.get(position).getAddTime(),count));
-                        SharedPreferences data = getActivity().getSharedPreferences("data",0);
-                        data.edit()
-                                .putString("products_sum", sum + "")
-                                .putString("products_discount", discount + "")
-                                .putString("products_count", products.size() + "")
-                                .apply();
+                        total_update();
+                        total_save();
+                        Log.d("product","position= " +  position + " sum= " + sum);
                     }
                 });
                 button_cancel.setOnClickListener(new View.OnClickListener() {
@@ -455,20 +423,13 @@ public class ShoppingStep1Fragment extends Fragment {
                             //刪除SQLlite資料
                             Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
                             sum -= products.get(position).price * products.get(position).count;
-                            products_price.setText("$" + String.format("%,d",sum));
-                            products_discount.setText("-$" + String.format("%,d",discount));
-                            products_total.setText("$" + String.format("%,d",sum - discount));
                             removeAt(position);
-                            LinearLayoutManager layoutmanage = new LinearLayoutManager(getActivity());
-                            layoutmanage.setAutoMeasureEnabled(true);
-                            layoutmanage.setOrientation(LinearLayoutManager.VERTICAL);
-                            listView.setLayoutManager(layoutmanage);
-                            SharedPreferences data = getActivity().getSharedPreferences("data",0);
-                            data.edit()
-                                    .putString("products_sum", sum + "")
-                                    .putString("products_discount", discount + "")
-                                    .putString("products_count", products.size() + "")
-                                    .apply();
+                            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+                            llm.setAutoMeasureEnabled(true);
+                            llm.setOrientation(LinearLayoutManager.VERTICAL);
+                            listView.setLayoutManager(llm);
+                            total_update();
+                            total_save();
                         }
                         product_total.setText("共" + products.size() + "項商品");
                     }
@@ -481,5 +442,18 @@ public class ShoppingStep1Fragment extends Fragment {
                 notifyItemRangeChanged(position, products.size());
             }
         }
+    }
+    private void total_update(){
+        products_price.setText("$" + String.format("%,d",sum));
+        products_discount.setText("-$" + String.format("%,d",discount));
+        products_total.setText("$" + String.format("%,d",sum - discount));
+    }
+    private void total_save(){
+        SharedPreferences data = getActivity().getSharedPreferences("data",0);
+        data.edit()
+                .putString("products_sum", sum + "")
+                .putString("products_discount", discount + "")
+                .putString("products_count", products.size() + "")
+                .apply();
     }
 }

@@ -19,9 +19,9 @@ import com.nail.tatproject.R;
 
 public class ShoppingStep2Fragment extends Fragment {
     private TextView other_option;
-    private TextView product_total,products_total,products_ship,products_all;
+    private TextView products_count,products_sum,products_ship,products_all;
     private final String ARG_SECTION_NUMBER = "section_number";
-    private int ship;
+    private int ship = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +45,8 @@ public class ShoppingStep2Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_step2, container, false);
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        product_total=(TextView) view.findViewById(R.id.product_total);
-        products_total = (TextView)view.findViewById(R.id.products_total);
+        products_count=(TextView) view.findViewById(R.id.products_count);
+        products_sum = (TextView)view.findViewById(R.id.products_sum);
         products_ship = (TextView)view.findViewById(R.id.products_ship);
         products_all = (TextView)view.findViewById(R.id.products_all);
         other_option = (TextView)view.findViewById(R.id.other_option);
@@ -66,10 +66,13 @@ public class ShoppingStep2Fragment extends Fragment {
         String discount = data.getString("products_discount", null);
         String count = data.getString("products_count", null);
         int total = (Integer.valueOf(sum) - Integer.valueOf(discount));
-        product_total.setText("共" + count+ "項商品");
-        products_total.setText("$" + String.format("%,d",total));
+        products_count.setText("共" + count+ "項商品");
+        products_sum.setText("$" + String.format("%,d",total));
         products_ship.setText("$" + String.format("%,d",ship));
         products_all.setText("$" + String.format("%,d", total + ship));
+        data.edit()
+                .putString("products_ship", ship + "")
+                .apply();
         return view;
     }
 

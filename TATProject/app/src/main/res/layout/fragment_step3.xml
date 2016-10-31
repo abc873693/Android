@@ -89,6 +89,13 @@
                         android:clickable="true"/>
                 </LinearLayout>
             </FrameLayout>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -143,20 +150,106 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:id="@+id/list_porduct"
-                android:visibility="gone">
+                android:visibility="visible">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    <TextView
+                    android:orientation="vertical">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/listView_product"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="20dp"
-                        android:text="即將擺入CardView"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        android:background="@color/grey_100"
+                    />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingRight="20dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="15dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="right"
+                                android:text="商品金額小計:" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:layout_weight="1"
+                                android:text="折價:" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:layout_weight="1"
+                                android:text="運費:" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="----------------------"
+                                android:gravity="right"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20dp"
+                                android:gravity="right"
+                                android:layout_weight="1"
+                                android:id="@+id/products_count"
+                                tools:text="products_count" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:orientation="vertical"
+                            android:paddingRight="8dp">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:layout_weight="1"
+                                android:id="@+id/products_sum"
+                                tools:text="product_sum" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:layout_weight="1"
+                                android:id="@+id/products_discount"
+                                tools:text="product_discount" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:layout_weight="1"
+                                android:id="@+id/products_ship"
+                                tools:text="product_ship" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="right"
+                                android:text="+)   -------------"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/red_500"
+                                android:textSize="20dp"
+                                android:gravity="right"
+                                android:layout_weight="1"
+                                android:id="@+id/products_total"
+                                tools:text="total" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -302,7 +395,8 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
     </FrameLayout>
 </FrameLayout>
