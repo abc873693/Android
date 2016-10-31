@@ -1,11 +1,13 @@
 package com.nail.tatproject.Fragment;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -36,21 +38,26 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by 70J on 2016/6/17.
  */
 public class ShoppingStep3Fragment extends Fragment {
-    private LinearLayout list_product,show_product;
+    private LinearLayout list_product, show_product;
     private TextView shrink, final_total;
     private TextView products_sum, products_discount, products_ship, products_total, products_count;
     private final String ARG_SECTION_NUMBER = "section_number";
     private String count;
     private TATApplication Global;
     private RecyclerView listView;
+    private TextView country, section;
     private ArrayList<Product> products = new ArrayList<>();
     private ArrayList<TATItem> IDs = new ArrayList<>();
+    private ArrayList<ArrayList<String>> TAIWAN = new ArrayList<>();
+    private ArrayList<String> COUNTRY = new ArrayList<>();
+    private int COUNTRY_INDEX = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,8 @@ public class ShoppingStep3Fragment extends Fragment {
         setRetainInstance(true);
         products.clear();
         IDs.clear();
+        TAIWAN.clear();
+        COUNTRY.clear();
         Global = (TATApplication) getActivity().getApplicationContext();
         for (TATItem item : Global.tatdb.getAll(TATDB.Shopping_TABLE_NAME)) {
             String id = item.getProductID();
@@ -69,6 +78,44 @@ public class ShoppingStep3Fragment extends Fragment {
         }
         for (TATItem i : IDs) {
             new AsyncGetProduct().execute("http://tatvip.ezsale.tw/tat/api/getprod.ashx", i.getProductID(), i.getCount() + "");
+        }
+        String str = getResources().getString(R.string.source);
+        Log.d("Source", str);
+        try {
+            JSONObject taiwan = new JSONObject(str);
+            Iterator keys = taiwan.keys();
+            while (keys.hasNext()) {
+                String dynamicKey = (String) keys.next();
+                //Log.d("Taiwan",dynamicKey);
+                COUNTRY.add(dynamicKey);
+                JSONObject object = taiwan.getJSONObject(dynamicKey);
+                sear(object.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (ArrayList<String> i : TAIWAN) {
+            for (String j : i) {
+                Log.d("data", j);
+            }
+        }
+    }
+
+    public void sear(String json) {
+        try {
+            ArrayList<String> tmp = new ArrayList<>();
+            //Log.d("json",json);
+            JSONObject object = new JSONObject(json);
+            Iterator keys = object.keys();
+            while (keys.hasNext()) {
+                String dynamicKey = (String) keys.next();
+                String line = object.optString(dynamicKey);
+                tmp.add(dynamicKey + " " + line);
+                //Log.d(dynamicKey,line);
+            }
+            TAIWAN.add(tmp);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -98,6 +145,8 @@ public class ShoppingStep3Fragment extends Fragment {
         products_total = (TextView) view.findViewById(R.id.products_total);
         products_count = (TextView) view.findViewById(R.id.products_count);
         listView = (RecyclerView) view.findViewById(R.id.listView_product);
+        country = (TextView) view.findViewById(R.id.spinner_country);
+        section = (TextView) view.findViewById(R.id.spinner_section);
         SharedPreferences data = getActivity().getSharedPreferences("data", 0);
         count = data.getString("products_count", null);
         int sum = Integer.valueOf(data.getString("products_sum", null));
@@ -122,6 +171,50 @@ public class ShoppingStep3Fragment extends Fragment {
                     list_product.setVisibility(View.VISIBLE);
                     shrink.setText("總計 " + count + " 項產品  △");
                 }
+            }
+        });
+        country.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialog_list = new AlertDialog.Builder(getActivity());
+                dialog_list.setTitle("請選擇縣市");
+                String s[] = new String[COUNTRY.size()];
+                s = COUNTRY.toArray(s);
+                dialog_list.setItems(s, new DialogInterface.OnClickListener() {
+                    @Override
+                    //只要你在onClick處理事件內，使用which參數，就可以知道按下陣列裡的哪一個了
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        COUNTRY_INDEX = which;
+                        country.setText(COUNTRY.get(which));
+                        section.setText("請選擇地區");
+                    }
+                });
+                dialog_list.show();
+            }
+        });
+        section.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialog_list = new AlertDialog.Builder(getActivity());
+                dialog_list.setTitle("請選擇地區");
+                String s[];
+                if (COUNTRY_INDEX != -1) {
+                    s = new String[TAIWAN.get(COUNTRY_INDEX).size()];
+                    s = TAIWAN.get(COUNTRY_INDEX).toArray(s);
+                }
+                else s = null;
+                dialog_list.setItems(s, new DialogInterface.OnClickListener() {
+                    @Override
+                    //只要你在onClick處理事件內，使用which參數，就可以知道按下陣列裡的哪一個了
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        if (COUNTRY_INDEX != -1) {
+                            section.setText(TAIWAN.get(COUNTRY_INDEX).get(which));
+                        }
+                    }
+                });
+                dialog_list.show();
             }
         });
         return view;

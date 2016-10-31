@@ -184,8 +184,8 @@
                                 android:id="@+id/listView_product"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@color/grey_100" />
-
+                                android:background="@color/grey_100"
+                                tools:listitem="@layout/list_product_simple"/>
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -400,19 +400,22 @@
                                     android:background="@drawable/mycircle"
                                     android:orientation="horizontal">
 
-                                    <Spinner
+                                    <TextView
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_gravity="center"
                                         android:layout_weight="1"
-                                        android:gravity="center" />
-
-                                    <Spinner
+                                        android:gravity="center"
+                                        android:text="請選擇縣市"
+                                        android:id="@+id/spinner_country"/>
+                                    <TextView
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_gravity="center"
                                         android:layout_weight="1"
-                                        android:gravity="center" />
+                                        android:gravity="center"
+                                        android:text="請選擇地區"
+                                        android:id="@+id/spinner_section"/>
                                 </LinearLayout>
 
                                 <LinearLayout
