@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.nail.tatproject.MainActivity;
@@ -58,6 +59,7 @@ public class ShoppingStep3Fragment extends Fragment {
     private ArrayList<ArrayList<String>> TAIWAN = new ArrayList<>();
     private ArrayList<String> COUNTRY = new ArrayList<>();
     private int COUNTRY_INDEX = -1;
+    public int error = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -204,8 +206,7 @@ public class ShoppingStep3Fragment extends Fragment {
                 if (COUNTRY_INDEX != -1) {
                     s = new String[TAIWAN.get(COUNTRY_INDEX).size()];
                     s = TAIWAN.get(COUNTRY_INDEX).toArray(s);
-                }
-                else s = null;
+                } else s = null;
                 dialog_list.setItems(s, new DialogInterface.OnClickListener() {
                     @Override
                     //只要你在onClick處理事件內，使用which參數，就可以知道按下陣列裡的哪一個了
@@ -264,7 +265,8 @@ public class ShoppingStep3Fragment extends Fragment {
                 return 0;
             }
             Reply = makeHttpRequest(param[0], "POST", content);
-            return 1;
+            if (Reply == null) return 0;
+            else return 1;
         }
 
         @Override
@@ -272,7 +274,6 @@ public class ShoppingStep3Fragment extends Fragment {
             //此method是在doInBackground完成以後，才會呼叫的
             super.onPostExecute(result);
             if (result == 1) {
-                Log.d("result", Reply);
                 try {
                     //http://tatex.ezsale.tw/upload/1SP-OK-001(1).JPG
                     JSONObject json_data = new JSONObject(Reply);
@@ -302,6 +303,10 @@ public class ShoppingStep3Fragment extends Fragment {
                     Log.e("JSON Parser", "Error parsing data " + e.toString());
                     e.printStackTrace();
                 }
+            }
+            else{
+                error++;
+                if (error == 1) Toast.makeText(getActivity(), "資料讀取錯誤", Toast.LENGTH_LONG).show();
             }
         }
 

@@ -179,16 +179,19 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical">
+
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
+
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/listView_product"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@color/grey_100"
-                                    tools:listitem="@layout/list_product_simple"/>
+                                    tools:listitem="@layout/list_product_simple" />
                             </RelativeLayout>
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -196,6 +199,7 @@
                                 android:paddingBottom="15dp"
                                 android:paddingRight="20dp"
                                 android:paddingTop="10dp">
+
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -341,13 +345,13 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/mycircle_2"
+                                android:background="@drawable/frame_outer"
                                 android:orientation="vertical">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="45dp"
-                                    android:background="@drawable/mycircle"
+                                    android:background="@drawable/frame_top"
                                     android:orientation="horizontal">
 
                                     <TextView
@@ -356,24 +360,25 @@
                                         android:layout_gravity="center"
                                         android:layout_weight="3"
                                         android:gravity="center"
+                                        android:paddingLeft="5dp"
                                         android:text="姓名"
                                         android:textColor="@color/grey_900"
-                                        android:textSize="20dp" />
+                                        android:textSize="18dp" />
 
                                     <EditText
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_weight="1"
-                                        android:paddingLeft="5dp"
+                                        android:background="@null"
                                         android:hint="輸入中文全名"
-                                        android:textSize="20dp"
-                                        android:background="@null"/>
+                                        android:paddingLeft="5dp"
+                                        android:textSize="16dp" />
                                 </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="45dp"
-                                    android:background="@drawable/mycircle"
+                                    android:background="@drawable/frame_center"
                                     android:orientation="horizontal">
 
                                     <TextView
@@ -381,64 +386,67 @@
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center"
                                         android:layout_weight="3"
+                                        android:background="@null"
                                         android:gravity="center"
+                                        android:paddingLeft="5dp"
                                         android:text="手機號碼"
                                         android:textColor="@color/grey_900"
-                                        android:textSize="20dp"
-                                        android:background="@null"/>
+                                        android:textSize="18dp" />
 
                                     <EditText
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_weight="1"
+                                        android:background="@null"
                                         android:ellipsize="end"
-                                        android:inputType="number"
                                         android:hint="輸入手機號碼"
+                                        android:inputType="number"
                                         android:maxLength="10"
                                         android:maxLines="1"
-                                        android:textSize="20dp"
                                         android:paddingLeft="5dp"
-                                        android:background="@null"/>
+                                        android:textSize="16dp" />
                                 </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="45dp"
-                                    android:background="@drawable/mycircle"
                                     android:orientation="horizontal">
 
                                     <TextView
+                                        android:id="@+id/spinner_country"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_gravity="center"
                                         android:layout_weight="1"
+                                        android:background="@drawable/frame_center"
                                         android:gravity="center"
-                                        android:text="請選擇縣市"
-                                        android:id="@+id/spinner_country"/>
+                                        android:text="請選擇縣市" />
+
                                     <TextView
+                                        android:id="@+id/spinner_section"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_gravity="center"
                                         android:layout_weight="1"
+                                        android:background="@drawable/frame_center"
                                         android:gravity="center"
-                                        android:text="請選擇地區"
-                                        android:id="@+id/spinner_section"/>
+                                        android:text="請選擇地區" />
                                 </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="45dp"
-                                    android:background="@drawable/mycircle"
+                                    android:background="@drawable/frame_bottom"
                                     android:orientation="horizontal">
 
                                     <EditText
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:layout_weight="1"
+                                        android:background="@null"
                                         android:hint="地址"
-                                        android:textSize="20dp"
-                                        android:gravity="center"
-                                        android:background="@null"/>
+                                        android:paddingLeft="10dp"
+                                        android:textSize="16dp" />
                                 </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
@@ -458,7 +466,7 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:background="@drawable/mycircle_2"
+                                    android:background="@drawable/frame_outer"
                                     android:gravity="center"
                                     android:paddingBottom="10dp"
                                     android:paddingTop="10dp"

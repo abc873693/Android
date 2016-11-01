@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.nail.tatproject.MainActivity;
@@ -49,7 +51,9 @@ public class ShoppingStep1Fragment extends Fragment {
     private ArrayList<Product> products = new ArrayList<>();
     private ArrayList<TATItem> IDs = new ArrayList<>();
     private int sum = 0, discount = 0;
+    private LinearLayout empty, shoppincart;
     private final String ARG_SECTION_NUMBER = "section_number";
+    public int error = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class ShoppingStep1Fragment extends Fragment {
         IDs.clear();
         sum = 0;
         discount = 0;
+        error = 0;
         Global = (TATApplication) getActivity().getApplicationContext();
         // 如果資料庫是空的，就建立一些範例資料
         // 這是為了方便測試用的，完成應用程式以後可以拿掉
@@ -98,16 +103,17 @@ public class ShoppingStep1Fragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
         listView = (RecyclerView) view.findViewById(R.id.listView_product);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setAutoMeasureEnabled(true);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        listView.setLayoutManager(llm);
+        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         product_total = (TextView) view.findViewById(R.id.product_total);
         products_price = (TextView) view.findViewById(R.id.products_price);
         products_discount = (TextView) view.findViewById(R.id.products_discount);
         products_total = (TextView) view.findViewById(R.id.products_total);
         listView.setNestedScrollingEnabled(false);
         listView.setHasFixedSize(true);
+        empty = (LinearLayout) view.findViewById(R.id.empty);
+        shoppincart = (LinearLayout) view.findViewById(R.id.shoppingcart);
+        empty.setVisibility(View.GONE);
+        shoppincart.setVisibility(View.VISIBLE);
         return view;
     }
 
@@ -154,7 +160,8 @@ public class ShoppingStep1Fragment extends Fragment {
                 return 0;
             }
             Reply = makeHttpRequest(param[0], "POST", content);
-            return 1;
+            if (Reply == null) return 0;
+            else return 1;
         }
 
         @Override
@@ -162,7 +169,6 @@ public class ShoppingStep1Fragment extends Fragment {
             //此method是在doInBackground完成以後，才會呼叫的
             super.onPostExecute(result);
             if (result == 1) {
-                Log.d("result", Reply);
                 try {
                     //http://tatex.ezsale.tw/upload/1SP-OK-001(1).JPG
                     JSONObject json_data = new JSONObject(Reply);
@@ -196,6 +202,9 @@ public class ShoppingStep1Fragment extends Fragment {
                     Log.e("JSON Parser", "Error parsing data " + e.toString());
                     e.printStackTrace();
                 }
+            } else {
+                error++;
+                if (error == 1) Toast.makeText(getActivity(), "資料讀取錯誤", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -217,6 +226,9 @@ public class ShoppingStep1Fragment extends Fragment {
             // 建立連線
             URL url = new URL(temp_url);
             conn = (HttpURLConnection) url.openConnection();
+
+            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(10000);
             //===============================
             conn.setDoOutput(true);
             // Read from the connection. Default is true.
@@ -427,18 +439,20 @@ public class ShoppingStep1Fragment extends Fragment {
                 button_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (products.size() == 1) ;
-                        else {
-                            int position = getAdapterPosition();
-                            Log.d("position", position + "");
-                            //刪除SQLlite資料
-                            Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
-                            sum -= products.get(position).price * products.get(position).count;
-                            removeAt(position);
-                            total_update();
-                            total_save();
-                        }
+                        int position = getAdapterPosition();
+                        Log.d("position", position + "");
+                        //刪除SQLlite資料
+                        Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
+                        sum -= products.get(position).price * products.get(position).count;
+                        removeAt(position);
+                        total_update();
+                        total_save();
+                        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         product_total.setText("共" + products.size() + "項商品");
+                        if (products.size() == 0) {
+                            empty.setVisibility(View.VISIBLE);
+                            shoppincart.setVisibility(View.GONE);
+                        }
                     }
                 });
             }

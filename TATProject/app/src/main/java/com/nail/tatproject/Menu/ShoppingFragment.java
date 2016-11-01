@@ -6,8 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.nail.tatproject.R;
+import com.nail.tatproject.SQLite.TATDB;
 import com.nail.tatproject.TATApplication;
 
 /**
@@ -44,11 +46,14 @@ public class ShoppingFragment extends Fragment {
         view.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Global.ShoppingStep < 2) {
+                if(Global.tatdb.getCount(TATDB.Shopping_TABLE_NAME) == 0 && Global.ShoppingStep==0){
+                    Toast.makeText(getActivity(), "購物車是空的", Toast.LENGTH_LONG).show();
+                }
+                else if(Global.ShoppingStep < 2) {
                     Global.ShoppingStep += 1;
+                    if(Global.ShoppingStep == 2)view.findViewById(R.id.button).setVisibility(View.GONE);
                     getChildFragmentManager().beginTransaction().replace(R.id.shopping_container, Global.ShoppingList.get(Global.ShoppingStep)).commit();
                 }
-
             }
         });
         return view;

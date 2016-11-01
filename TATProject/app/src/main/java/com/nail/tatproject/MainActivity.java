@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 if(Global.ShoppingStep > 0) {
                     Global.ShoppingStep -= 1;
+                    findViewById(R.id.button).setVisibility(View.VISIBLE);
                     mCurrentFrgment.getChildFragmentManager().beginTransaction().replace(R.id.shopping_container, Global.ShoppingList.get(Global.ShoppingStep)).commit();
                 }
             }

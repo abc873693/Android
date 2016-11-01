@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -57,7 +58,7 @@ public class TATDB {
     }
 
     // 新增參數指定的物件
-    public TATItem insert(String TABLE_NAME,TATItem item) {
+    public TATItem insert(String TABLE_NAME, TATItem item) {
         // 建立準備新增資料的ContentValues物件
         ContentValues cv = new ContentValues();
 
@@ -78,7 +79,7 @@ public class TATDB {
     }
 
     // 修改參數指定的物件
-    public boolean update(String TABLE_NAME,TATItem item) {
+    public boolean update(String TABLE_NAME, TATItem item) {
         // 建立準備修改資料的ContentValues物件
         ContentValues cv = new ContentValues();
 
@@ -97,11 +98,11 @@ public class TATDB {
     }
 
     // 刪除參數指定編號的資料
-    public boolean delete(String TABLE_NAME,String ProductID){
+    public boolean delete(String TABLE_NAME, String ProductID) {
         // 設定條件為編號，格式為「欄位名稱=資料」
         String where = PRODUCTID + "=" + ProductID;
         // 刪除指定編號資料並回傳刪除是否成功
-        return db.delete(TABLE_NAME, where , null) > 0;
+        return db.delete(TABLE_NAME, where, null) > 0;
     }
 
     // 讀取所有記事資料
@@ -166,16 +167,11 @@ public class TATDB {
 
     // 建立範例資料
     public void sample() {
-        TATItem item = new TATItem("55", new Date().getTime());
-        TATItem item2 = new TATItem("66", new Date().getTime());
-        TATItem item3 = new TATItem("77", new Date().getTime());
-        /*TATItem item4 = new TATItem("4", new Date().getTime());
-        TATItem item5 = new TATItem("5", new Date().getTime());*/
-
-        insert(Shopping_TABLE_NAME, item);
-        insert(Shopping_TABLE_NAME, item2);
-        insert(Shopping_TABLE_NAME, item3);
-        /*insert(Shopping_TABLE_NAME, item4);
-        insert(Shopping_TABLE_NAME, item5);*/
+        for (int i = 0; i < 10; i++) {
+            Random r = new Random();
+            int x = r.nextInt(3111) - 1;
+            TATItem item = new TATItem(x + "", new Date().getTime());
+            insert(Shopping_TABLE_NAME, item);
+        }
     }
 }
