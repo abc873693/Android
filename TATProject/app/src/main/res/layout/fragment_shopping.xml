@@ -1,11 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Menu.ShoppingFragment"
     android:orientation="vertical"
     >
-
     <FrameLayout
         android:id="@+id/shopping_container"
         android:layout_width="match_parent"
@@ -17,8 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="下一步"
-        android:id="@+id/button"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-</RelativeLayout>
+        android:background="@color/red_400"
+        android:id="@+id/button" />
+</LinearLayout>

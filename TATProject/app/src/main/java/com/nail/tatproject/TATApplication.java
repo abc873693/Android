@@ -13,6 +13,7 @@ import com.nail.tatproject.Menu.HomeFragment;
 import com.nail.tatproject.Menu.MemberFragment;
 import com.nail.tatproject.Menu.SearchFragment;
 import com.nail.tatproject.Menu.ShoppingFragment;
+import com.nail.tatproject.SQLite.TATDB;
 
 import java.util.ArrayList;
 
@@ -23,10 +24,11 @@ public class TATApplication extends Application {
     public SharedPreferences sharedPref;   // 計錄參數
     public int ShoppingStep = 0;
     public ArrayList<Fragment> PageList, ShoppingList;
-
+    public TATDB tatdb;
     @Override
     public void onCreate() {
         super.onCreate();
+        tatdb = new TATDB(getApplicationContext());
         PageList = new ArrayList<>();
         PageList.add(AddFragment(1));
         PageList.add(AddFragment(2));

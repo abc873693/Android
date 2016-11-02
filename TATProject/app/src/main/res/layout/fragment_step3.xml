@@ -9,82 +9,473 @@
         android:layout_height="match_parent"
         android:layout_gravity="right|bottom"
         android:background="@color/grey_100">
-        <!--<android.support.v7.widget.RecyclerView
-            android:id="@+id/listView_product"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/list_product"
-            android:background="@color/grey_100"
-            android:paddingTop="30dp"
-            />-->
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="35dp">
-            <TextView
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey_300"
-                android:layout_weight="1" />
-            <TextView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:background="@color/grey_300"/>
-            <TextView
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/grey_300" />
+
+                    <TextView
+                        android:layout_width="10dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/grey_300" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/grey_300" />
+
+                    <TextView
+                        android:layout_width="10dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/grey_300" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/red_500" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/grey_200"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="確認購物車"
+                        android:textColor="@color/grey_500" />
+
+                    <TextView
+                        android:layout_width="10dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/grey_200"
+                        android:gravity="center"
+                        android:text=">"
+                        android:textColor="@color/grey_500" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/grey_200"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="付款與運送方式"
+                        android:textColor="@color/grey_500" />
+
+                    <TextView
+                        android:layout_width="10dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/grey_200"
+                        android:gravity="center"
+                        android:text=">"
+                        android:textColor="@color/grey_500" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/grey_200"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="資料填寫"
+                        android:textColor="@color/red_500" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey_300"
-                android:layout_weight="1"/>
-            <TextView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:background="@color/grey_300" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/red_500"
-                android:layout_weight="1" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="確認購物車"
-                android:background="@color/grey_200"
-                android:textColor="@color/grey_500"
-                android:gravity="center"
-                android:layout_weight="1"/>
-            <TextView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:text=">"
-                android:background="@color/grey_200"
-                android:textColor="@color/grey_500"
-                android:gravity="center"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey_200"
-                android:textColor="@color/grey_500"
-                android:gravity="center"
-                android:text="付款與運送方式"
-                android:layout_weight="1"/>
-            <TextView
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:text=">"
-                android:background="@color/grey_200"
-                android:textColor="@color/grey_500"
-                android:gravity="center"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey_200"
-                android:textColor="@color/red_500"
-                android:gravity="center"
-                android:text="資料填寫"
-                android:layout_weight="1"/>
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/show_product"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:paddingTop="10dp"
+                                android:text="本次消費總計"
+                                android:textColor="@color/black"
+                                android:textSize="20dp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/final_total"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="start"
+                                android:paddingLeft="10dp"
+                                android:paddingTop="10dp"
+                                android:textColor="@color/red_500"
+                                android:textSize="30dp"
+                                android:textStyle="bold"
+                                tools:text="$9,500" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/shrink"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:paddingTop="10dp"
+                            android:text="總計 2 項產品  ▽"
+                            android:textColor="@color/grey_600"
+                            android:textSize="15dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/myborder"
+                            android:textSize="10dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/list_porduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/listView_product"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/grey_100"
+                                    tools:listitem="@layout/list_product_simple" />
+                            </RelativeLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingBottom="15dp"
+                                android:paddingRight="20dp"
+                                android:paddingTop="10dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        android:text="商品金額小計:" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        android:text="折價:" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        android:text="運費:" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        android:text="----------------------" />
+
+                                    <TextView
+                                        android:id="@+id/products_count"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        android:textSize="20dp"
+                                        tools:text="products_count" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="2"
+                                    android:orientation="vertical"
+                                    android:paddingRight="8dp">
+
+                                    <TextView
+                                        android:id="@+id/products_sum"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        tools:text="product_sum" />
+
+                                    <TextView
+                                        android:id="@+id/products_discount"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        tools:text="product_discount" />
+
+                                    <TextView
+                                        android:id="@+id/products_ship"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        tools:text="product_ship" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        android:text="+) -------" />
+
+                                    <TextView
+                                        android:id="@+id/products_total"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:gravity="right"
+                                        android:textColor="@color/red_500"
+                                        android:textSize="20dp"
+                                        tools:text="total" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="end|center_horizontal"
+                                android:text="*  "
+                                android:textColor="@color/red_500"
+                                android:textSize="20dp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="10"
+                                android:gravity="left"
+                                android:text="收件人資訊"
+                                android:textColor="@color/black"
+                                android:textSize="20dp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:gravity="end|center_vertical"
+                                android:text="常用收件人   "
+                                android:textColor="@color/blue_600" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp"
+                            android:paddingTop="10dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/frame_outer"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="45dp"
+                                    android:background="@drawable/frame_top"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="3"
+                                        android:gravity="center"
+                                        android:paddingLeft="5dp"
+                                        android:text="姓名"
+                                        android:textColor="@color/grey_900"
+                                        android:textSize="18dp" />
+
+                                    <EditText
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:background="@null"
+                                        android:hint="輸入中文全名"
+                                        android:paddingLeft="5dp"
+                                        android:textSize="16dp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="45dp"
+                                    android:background="@drawable/frame_center"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="3"
+                                        android:background="@null"
+                                        android:gravity="center"
+                                        android:paddingLeft="5dp"
+                                        android:text="手機號碼"
+                                        android:textColor="@color/grey_900"
+                                        android:textSize="18dp" />
+
+                                    <EditText
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:background="@null"
+                                        android:ellipsize="end"
+                                        android:hint="輸入手機號碼"
+                                        android:inputType="number"
+                                        android:maxLength="10"
+                                        android:maxLines="1"
+                                        android:paddingLeft="5dp"
+                                        android:textSize="16dp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="45dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/spinner_country"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/frame_center"
+                                        android:gravity="center"
+                                        android:text="請選擇縣市" />
+
+                                    <TextView
+                                        android:id="@+id/spinner_section"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/frame_center"
+                                        android:gravity="center"
+                                        android:text="請選擇地區" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="45dp"
+                                    android:background="@drawable/frame_bottom"
+                                    android:orientation="horizontal">
+
+                                    <EditText
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:background="@null"
+                                        android:hint="地址"
+                                        android:paddingLeft="10dp"
+                                        android:textSize="16dp" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="20dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingBottom="20dp"
+                                android:paddingLeft="50dp"
+                                android:paddingRight="50dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/frame_outer"
+                                    android:gravity="center"
+                                    android:paddingBottom="10dp"
+                                    android:paddingTop="10dp"
+                                    android:text="完成收件人資訊，請點我輸入信用卡" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
     </FrameLayout>
 </FrameLayout>
