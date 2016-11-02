@@ -28,6 +28,7 @@ public class ShoppingStep2Fragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.e("ShoppingStep2Fragment", "onCreate");
         setRetainInstance(true);
+        ship = 0;
     }
 
     @Override
@@ -63,16 +64,16 @@ public class ShoppingStep2Fragment extends Fragment {
             }
         });
         SharedPreferences data = getActivity().getSharedPreferences("data", 0);
-        String sum = data.getString("products_sum", null);
-        String discount = data.getString("products_discount", null);
-        String count = data.getString("products_count", null);
-        int total = (Integer.valueOf(sum) - Integer.valueOf(discount));
+        int sum = data.getInt("products_sum", 0);
+        int discount = data.getInt("products_discount", 0);
+        int count = data.getInt("products_count", 0);
+        int total = sum - discount;
         products_count.setText("共" + count + "項商品");
         products_sum.setText("$" + String.format("%,d", total));
         products_ship.setText("$" + String.format("%,d", ship));
         products_all.setText("$" + String.format("%,d", total + ship));
         data.edit()
-                .putString("products_ship", ship + "")
+                .putInt("products_ship", ship)
                 .apply();
         return view;
     }

@@ -26,7 +26,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    tools:src="@mipmap/ic_launcher"
+                    android:src="@mipmap/ic_launcher"
                     android:id="@+id/product_image"
                     android:scaleType="fitCenter" />
             </LinearLayout>

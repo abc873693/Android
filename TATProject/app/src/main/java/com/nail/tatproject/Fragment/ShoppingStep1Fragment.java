@@ -170,14 +170,14 @@ public class ShoppingStep1Fragment extends Fragment {
             super.onPostExecute(result);
             if (result == 1) {
                 try {
-                    //http://tatex.ezsale.tw/upload/1SP-OK-001(1).JPG
+                    Log.d("Product Json",Reply);
                     JSONObject json_data = new JSONObject(Reply);
                     com.nail.tatproject.moudle.Product module = new com.nail.tatproject.moudle.Product();
                     module.id = json_data.optInt("ID");
                     module.subid = json_data.optInt("SubID");
                     module.image_URL = json_data.optString("Img1");
-                    //module.price = json_data.optInt("Value1");
-                    module.price = 1500;
+                    int tmp_price = json_data.optInt("Value1");
+                    module.price = tmp_price==0 ? 1500: tmp_price;
                     module.name = json_data.optString("Title");
                     if (!json_data.isNull("Stock")) {
                         if (json_data.getJSONObject("Stock").has("Num")) {
@@ -291,7 +291,8 @@ public class ShoppingStep1Fragment extends Fragment {
                     if (bitmap != null) {
                         imageView.setImageBitmap(bitmap);
                     } else {
-                        imageView.setImageDrawable(null);
+                        imageView.setImageResource(R.mipmap.ic_launcher);
+                        //若無圖案則放開啟圖案
                     }
                 }
             }
@@ -475,9 +476,9 @@ public class ShoppingStep1Fragment extends Fragment {
     private void total_save() {
         SharedPreferences data = getActivity().getSharedPreferences("data", 0);
         data.edit()
-                .putString("products_sum", sum + "")
-                .putString("products_discount", discount + "")
-                .putString("products_count", products.size() + "")
+                .putInt("products_sum", sum )
+                .putInt("products_discount", discount)
+                .putInt("products_count", products.size())
                 .apply();
     }
 }

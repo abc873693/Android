@@ -49,9 +49,10 @@ public class MainActivity extends Activity {
     public ArrayList<PostModule> posts = new ArrayList<>();
     public CallbackManager callbackManager;
     public AccessToken accessToken;
-    public String access_token , page_name = "" , page_picture_url = "";
-    public final String  page_id = "1550326135225896";
-    //https://graph.facebook.com/656114697817019/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
+    public final String access_token = "EAAa2ZBnr08RMBAJNBZC18SR4tTXpfTOPDaNwS3Q6fZC4tXLA1x2ZCkQYKeJbLFqUZCw2k8Qu6sdN8AxAUA3PhMKnZCHPBUPApa5jHinAlfNZAWWme1OxFXwmA0aXukGcu15KmOSfW2COv3nbB97N9nRbt1G9r4lbI2N9eNm2jHndwZDZD";
+    String page_name = "" , page_picture_url = "";
+    public final String page_id = "496974947026732";
+    //https://graph.facebook.com/496974947026732/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
     public SwipeRefreshLayout swipeRefreshLayout;
     public RecyclerView listView;
     public Button loginButton;
@@ -67,6 +68,7 @@ public class MainActivity extends Activity {
         new AsyncGetName().execute();
         new AsyncGetPost().execute();
         LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setAutoMeasureEnabled(true);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(llm);
         //宣告callback Manager
@@ -172,7 +174,8 @@ public class MainActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
             try {
-                access_token = data.getString("Access_token", "");
+                //access_token = data.getString("Access_token", "");
+                Log.d("access_token",access_token);
                 targetURL = targetURL + access_token;
                 // 利用string url构建URL对象
                 URL mURL = new URL(targetURL);
@@ -216,7 +219,6 @@ public class MainActivity extends Activity {
 
     public class AsyncGetPost extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
-        SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
         private String targetURL = "https://graph.facebook.com/"+ page_id + "/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=" ;
         //https://graph.facebook.com/656114697817019/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
         private ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
@@ -231,7 +233,6 @@ public class MainActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
             try {
-                access_token = data.getString("Access_token", "");
                 targetURL = targetURL + access_token;
                 // 利用string url构建URL对象
                 URL mURL = new URL(targetURL);
@@ -270,7 +271,8 @@ public class MainActivity extends Activity {
                     JSONObject dataObject = jsonArray.getJSONObject(i);
                     module.id = dataObject.optString("id");
                     module.title = page_name;
-                    module.date = dataObject.optString("created_time").substring(0,10);
+                    String tmp_date = dataObject.optString("created_time");
+                    module.date = tmp_date.substring(0,10) + " " +  tmp_date.substring(11,19 );
                     module.content = dataObject.optString("message");
                     module.likes = dataObject.getJSONObject("likes").getJSONObject("summary").optString("total_count") +" 喜歡";
                     if(dataObject.has("shares")){
@@ -325,6 +327,7 @@ public class MainActivity extends Activity {
                         imageView.setImageBitmap(bitmap);
                     } else {
                         imageView.setImageDrawable(null);
+                        imageView.setVisibility(View.GONE);
                     }
                 }
             }

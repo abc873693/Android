@@ -53,7 +53,7 @@ public class ShoppingStep3Fragment extends Fragment {
     private TextView checkout;
     private EditText name, cell, address;
     private final String ARG_SECTION_NUMBER = "section_number";
-    private String count;
+    private int count;
     private TATApplication Global;
     private RecyclerView listView;
     private TextView country, section;
@@ -98,11 +98,6 @@ public class ShoppingStep3Fragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        for (ArrayList<Section> i : TAIWAN) {
-            for (Section j : i) {
-                Log.d("data", j.number + j.name);
-            }
         }
     }
 
@@ -165,10 +160,10 @@ public class ShoppingStep3Fragment extends Fragment {
         cell = (EditText) view.findViewById(R.id.cell);
         address = (EditText) view.findViewById(R.id.address);
         SharedPreferences data = getActivity().getSharedPreferences("data", 0);
-        count = data.getString("products_count", null);
-        int sum = Integer.valueOf(data.getString("products_sum", null));
-        int discount = Integer.valueOf(data.getString("products_discount", null));
-        int ship = Integer.valueOf(data.getString("products_ship", null));
+        count = data.getInt("products_count", 0);
+        int sum = data.getInt("products_sum", 0);
+        int discount = data.getInt("products_discount", 0);
+        int ship = data.getInt("products_ship", 0);
         int SUM = sum - discount + discount;
         listView.setNestedScrollingEnabled(false);
         listView.setHasFixedSize(true);
@@ -219,7 +214,7 @@ public class ShoppingStep3Fragment extends Fragment {
                 dialog_list.setTitle("請選擇地區");
                 String s[];
                 if (COUNTRY_INDEX != -1) {
-                    ArrayList<Section> tmp = new ArrayList<>();
+                    ArrayList<Section> tmp;
                     s = new String[TAIWAN.get(COUNTRY_INDEX).size()];
                     tmp = TAIWAN.get(COUNTRY_INDEX);
                     int x=0;
@@ -277,7 +272,6 @@ public class ShoppingStep3Fragment extends Fragment {
         Items(int newid) {
             ID = newid;
         }
-
         int ID = 1;
     }
 
@@ -290,7 +284,7 @@ public class ShoppingStep3Fragment extends Fragment {
         protected Integer doInBackground(String... param) {
             //get Data 單存取資料
             Gson gson = new Gson();
-            String content = null;
+            String content ;
             try {
                 content = "CheckM=" + URLEncoder.encode("286e5560eeac9d7ecb7ecbb6968148c7", "UTF-8");
                 content += "&SiteID=" + URLEncoder.encode("778", "UTF-8");
