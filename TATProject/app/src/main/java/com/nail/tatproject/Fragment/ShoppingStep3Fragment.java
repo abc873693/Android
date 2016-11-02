@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -49,6 +50,8 @@ public class ShoppingStep3Fragment extends Fragment {
     private LinearLayout list_product, show_product;
     private TextView shrink, final_total;
     private TextView products_sum, products_discount, products_ship, products_total, products_count;
+    private TextView checkout;
+    private EditText name, cell, address;
     private final String ARG_SECTION_NUMBER = "section_number";
     private String count;
     private TATApplication Global;
@@ -56,7 +59,7 @@ public class ShoppingStep3Fragment extends Fragment {
     private TextView country, section;
     private ArrayList<Product> products = new ArrayList<>();
     private ArrayList<TATItem> IDs = new ArrayList<>();
-    private ArrayList<ArrayList<String>> TAIWAN = new ArrayList<>();
+    private ArrayList<ArrayList<Section>> TAIWAN = new ArrayList<>();
     private ArrayList<String> COUNTRY = new ArrayList<>();
     private int COUNTRY_INDEX = -1;
     public int error = 0;
@@ -96,23 +99,31 @@ public class ShoppingStep3Fragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        for (ArrayList<String> i : TAIWAN) {
-            for (String j : i) {
-                Log.d("data", j);
+        for (ArrayList<Section> i : TAIWAN) {
+            for (Section j : i) {
+                Log.d("data", j.number + j.name);
             }
         }
     }
 
+    private class Section{
+        String name;
+        String number;
+        Section(String nw_name,String  nw_num){
+            name = nw_name;
+            number = nw_num;
+        }
+    }
     public void sear(String json) {
         try {
-            ArrayList<String> tmp = new ArrayList<>();
+            ArrayList<Section> tmp = new ArrayList<>();
             //Log.d("json",json);
             JSONObject object = new JSONObject(json);
             Iterator keys = object.keys();
             while (keys.hasNext()) {
                 String dynamicKey = (String) keys.next();
                 String line = object.optString(dynamicKey);
-                tmp.add(dynamicKey + " " + line);
+                tmp.add(new Section(dynamicKey,line));
                 //Log.d(dynamicKey,line);
             }
             TAIWAN.add(tmp);
@@ -146,9 +157,13 @@ public class ShoppingStep3Fragment extends Fragment {
         products_ship = (TextView) view.findViewById(R.id.products_ship);
         products_total = (TextView) view.findViewById(R.id.products_total);
         products_count = (TextView) view.findViewById(R.id.products_count);
+        checkout = (TextView) view.findViewById(R.id.checkout);
         listView = (RecyclerView) view.findViewById(R.id.listView_product);
         country = (TextView) view.findViewById(R.id.spinner_country);
         section = (TextView) view.findViewById(R.id.spinner_section);
+        name = (EditText) view.findViewById(R.id.name);
+        cell = (EditText) view.findViewById(R.id.cell);
+        address = (EditText) view.findViewById(R.id.address);
         SharedPreferences data = getActivity().getSharedPreferences("data", 0);
         count = data.getString("products_count", null);
         int sum = Integer.valueOf(data.getString("products_sum", null));
@@ -204,8 +219,13 @@ public class ShoppingStep3Fragment extends Fragment {
                 dialog_list.setTitle("請選擇地區");
                 String s[];
                 if (COUNTRY_INDEX != -1) {
+                    ArrayList<Section> tmp = new ArrayList<>();
                     s = new String[TAIWAN.get(COUNTRY_INDEX).size()];
-                    s = TAIWAN.get(COUNTRY_INDEX).toArray(s);
+                    tmp = TAIWAN.get(COUNTRY_INDEX);
+                    int x=0;
+                    for(Section i:tmp){
+                        s[x++] = i.number + " "+ i.name;
+                    }
                 } else s = null;
                 dialog_list.setItems(s, new DialogInterface.OnClickListener() {
                     @Override
@@ -213,11 +233,29 @@ public class ShoppingStep3Fragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO Auto-generated method stub
                         if (COUNTRY_INDEX != -1) {
-                            section.setText(TAIWAN.get(COUNTRY_INDEX).get(which));
+                            section.setText(TAIWAN.get(COUNTRY_INDEX).get(which).name);
                         }
                     }
                 });
                 dialog_list.show();
+            }
+        });
+        checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if("".equals(name.getText().toString().trim())){
+                    Toast.makeText(v.getContext(), "請輸入姓名！", Toast.LENGTH_LONG).show();
+                }else if(cell.getText().length()!=10 || ("".equals(cell.getText().toString().trim()))){
+                    Toast.makeText(v.getContext(), "請輸入正確電話號碼！", Toast.LENGTH_LONG).show();
+                }else if("請選擇縣市".equals(country.getText().toString().trim())){
+                    Toast.makeText(v.getContext(), "請選擇縣市！", Toast.LENGTH_LONG).show();
+                }else if("請選擇地區".equals(section.getText().toString().trim())){
+                    Toast.makeText(v.getContext(), "請選擇地區！", Toast.LENGTH_LONG).show();
+                }else if("".equals(address.getText().toString().trim())){
+                    Toast.makeText(v.getContext(), "請輸入地址！", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(v.getContext(), "你的姓名："+name.getText()+"\n你的電話："+cell.getText()+"\n你的地址："+country.getText()+section.getText()+address.getText(), Toast.LENGTH_LONG).show();
+                }
             }
         });
         return view;
@@ -303,8 +341,7 @@ public class ShoppingStep3Fragment extends Fragment {
                     Log.e("JSON Parser", "Error parsing data " + e.toString());
                     e.printStackTrace();
                 }
-            }
-            else{
+            } else {
                 error++;
                 if (error == 1) Toast.makeText(getActivity(), "資料讀取錯誤", Toast.LENGTH_LONG).show();
             }

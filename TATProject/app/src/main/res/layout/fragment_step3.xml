@@ -372,7 +372,8 @@
                                         android:background="@null"
                                         android:hint="輸入中文全名"
                                         android:paddingLeft="5dp"
-                                        android:textSize="16dp" />
+                                        android:textSize="16dp"
+                                        android:id="@+id/name"/>
                                 </LinearLayout>
 
                                 <LinearLayout
@@ -404,7 +405,9 @@
                                         android:maxLength="10"
                                         android:maxLines="1"
                                         android:paddingLeft="5dp"
-                                        android:textSize="16dp" />
+                                        android:textSize="16dp"
+                                        android:id="@+id/cell"
+                                        android:digits="0123456789"/>
                                 </LinearLayout>
 
                                 <LinearLayout
@@ -446,7 +449,8 @@
                                         android:background="@null"
                                         android:hint="地址"
                                         android:paddingLeft="10dp"
-                                        android:textSize="16dp" />
+                                        android:textSize="16dp"
+                                        android:id="@+id/address"/>
                                 </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
@@ -470,7 +474,8 @@
                                     android:gravity="center"
                                     android:paddingBottom="10dp"
                                     android:paddingTop="10dp"
-                                    android:text="完成收件人資訊，請點我輸入信用卡" />
+                                    android:text="完成收件人資訊，請點我輸入信用卡"
+                                    android:id="@+id/checkout"/>
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
