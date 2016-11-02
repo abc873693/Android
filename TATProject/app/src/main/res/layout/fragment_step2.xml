@@ -225,11 +225,8 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:paddingRight="10dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="7dp"
-                                />
+                            android:paddingRight="10dp"
+                            android:paddingTop="5dp">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
