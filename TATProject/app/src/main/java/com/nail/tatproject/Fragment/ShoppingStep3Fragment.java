@@ -456,6 +456,7 @@ public class ShoppingStep3Fragment extends Fragment {
 
         private List<Product> contactList;
 
+
         public ContactAdapter(List<com.nail.tatproject.moudle.Product> contactList) {
             this.contactList = contactList;
         }
