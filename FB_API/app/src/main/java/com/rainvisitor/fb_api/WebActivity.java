@@ -12,6 +12,7 @@ import android.widget.TextView;
 public class WebActivity extends AppCompatActivity {
     private WebView myWebView;
     private String name;
+    private TextView textView_title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,13 +22,16 @@ public class WebActivity extends AppCompatActivity {
             name = getIntent().getExtras().getString("url");
         }
         TextView textView_URL = (TextView)findViewById(R.id.textView_URL);
+        TextView cancel = (TextView)findViewById(R.id.cancel);
+        textView_title = (TextView)findViewById(R.id.textView_title);
         final SeekBar seekBer = (SeekBar)findViewById(R.id.seekBer);
-        textView_URL.setText(name);
         myWebView = (WebView) findViewById(R.id.webView);
         myWebView.getSettings().setJavaScriptEnabled(true);
         myWebView.requestFocus();
         myWebView.setWebViewClient(new MyWebViewClient());
         myWebView.loadUrl(name);
+        if(name.length()>=40)name = name.substring(0,40) + "...";
+        textView_URL.setText(name);
         myWebView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress)
             {
@@ -35,7 +39,15 @@ public class WebActivity extends AppCompatActivity {
                 if(progress == 100) {
                     seekBer.setProgress(100);
                     seekBer.setVisibility(View.GONE);
+                    textView_title.setText(myWebView.getTitle());
                 }
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WebActivity.this.finish();
+
             }
         });
     }
