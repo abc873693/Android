@@ -17,6 +17,15 @@
             tools:text="url"
             />
     </Toolbar>
+    <SeekBar
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:thumb="@color/blue_200"
+        android:max="100"
+        tools:progress="100"
+        android:id="@+id/seekBer"
+        android:padding="0dip"
+        />
     <WebView
         android:id="@+id/webView"
         android:layout_width="fill_parent"

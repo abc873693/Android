@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
     public ArrayList<PostModule> posts = new ArrayList<>();
     public CallbackManager callbackManager;
     public AccessToken accessToken;
-    public final String access_token = "EAAa2ZBnr08RMBACfUD1XbpSMWUa1K0mBhirJe8Khn3NsZAAkQKTZBdZA4iNDVcHNckZAc9TYAQvHAu6GzR4nbGRbJXESfx0BpO6yi8Eehw5BPMFdMVgIPRY0ctZAnDLkXGjLVTaDEiLCmm5kMkllsEJunzVuBXpm8jv3jd9gDRGQZDZD";
+    public final String access_token = "EAAa2ZBnr08RMBAD2jm2CqGliLKacHHPxBbgpf67cAoZAGzDWTZBLg8QST9nQbpZCUGC9EhQKx10xd062G5ApM4mxn6JiZBLL8ABQNi76mACGkP2tj3Ro1OfZAgL72VUZCWbcMfZC0eZCYveQPbALFN8RwMZBEctqhH0F0ZD";
     String page_name = "" , page_picture_url = "";
     public final String page_id = "496974947026732";
     //https://graph.facebook.com/496974947026732/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
