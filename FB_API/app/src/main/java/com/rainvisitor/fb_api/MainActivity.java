@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
     public CallbackManager callbackManager;
     public AccessToken accessToken;
     public final String access_token = "EAAa2ZBnr08RMBAD2jm2CqGliLKacHHPxBbgpf67cAoZAGzDWTZBLg8QST9nQbpZCUGC9EhQKx10xd062G5ApM4mxn6JiZBLL8ABQNi76mACGkP2tj3Ro1OfZAgL72VUZCWbcMfZC0eZCYveQPbALFN8RwMZBEctqhH0F0ZD";
-    String page_name = "" , page_picture_url = "";
+    String page_name = "", page_picture_url = "";
     public final String page_id = "496974947026732";
     //https://graph.facebook.com/496974947026732/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
     public SwipeRefreshLayout swipeRefreshLayout;
@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
             }
         });
         callbackManager = CallbackManager.Factory.create();
-        loginButton.setOnClickListener(new Button.OnClickListener(){
+        loginButton.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -130,12 +130,14 @@ public class MainActivity extends Activity {
                 request.setParameters(parameters);
                 request.executeAsync();
             }
+
             //登入取消
             @Override
             public void onCancel() {
                 // App code
                 Log.d("FB", "CANCEL");
             }
+
             //登入失敗
             @Override
             public void onError(FacebookException exception) {
@@ -175,15 +177,17 @@ public class MainActivity extends Activity {
     public class AsyncGetName extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
         SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
-        private String targetURL = "https://graph.facebook.com/"+ page_id + "?fields=picture,name&access_token=" ;
+        private String targetURL = "https://graph.facebook.com/" + page_id + "?fields=picture,name&access_token=";
+
         @Override
         protected void onPreExecute() {
         }
+
         @Override
         protected String doInBackground(String... params) {
             try {
                 //access_token = data.getString("Access_token", "");
-                Log.d("access_token",access_token);
+                Log.d("access_token", access_token);
                 targetURL = targetURL + access_token;
                 // 利用string url构建URL对象
                 URL mURL = new URL(targetURL);
@@ -210,13 +214,13 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d("data",  result);
+            Log.d("data", result);
             try {
                 posts.clear();
                 JSONObject json_data = new JSONObject(result);
                 page_name = json_data.optString("name");
                 page_picture_url = json_data.getJSONObject("picture").getJSONObject("data").optString("url");
-                Log.d("page", "name = " +  page_name);
+                Log.d("page", "name = " + page_name);
             } catch (Exception e) {
                 Toast.makeText(MainActivity.this, "資料取得失敗!", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
@@ -227,7 +231,7 @@ public class MainActivity extends Activity {
 
     public class AsyncGetPost extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
-        private String targetURL = "https://graph.facebook.com/"+ page_id + "/posts?fields=full_picture,shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=" ;
+        private String targetURL = "https://graph.facebook.com/" + page_id + "/posts?fields=source,full_picture,shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&limit=100&show_expired=true&access_token=";
         //https://graph.facebook.com/656114697817019/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
         private ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
 
@@ -269,32 +273,33 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             pdLoading.dismiss();
-            Log.d("data",  result);
+            Log.d("data", result);
             try {
                 posts.clear();
                 JSONObject json_data = new JSONObject(result);
                 JSONArray jsonArray = json_data.getJSONArray("data");
-                for (int i =  0; i <= jsonArray.length() - 1; i++) {
+                for (int i = 0; i <= jsonArray.length() - 1; i++) {
                     PostModule module = new PostModule();
                     JSONObject dataObject = jsonArray.getJSONObject(i);
                     module.id = dataObject.optString("id");
                     module.title = page_name;
                     String tmp_date = dataObject.optString("created_time");
-                    module.date = tmp_date.substring(0,10) + " " +  tmp_date.substring(11,19 );
+                    module.date = tmp_date.substring(0, 10) + " " + tmp_date.substring(11, 19);
                     module.content = dataObject.optString("message");
-                    module.likes = dataObject.getJSONObject("likes").getJSONObject("summary").optString("total_count") +" 喜歡";
-                    if(dataObject.has("shares")){
+                    module.likes = dataObject.getJSONObject("likes").getJSONObject("summary").optString("total_count") + " 喜歡";
+                    if (dataObject.has("shares")) {
                         module.shares = dataObject.getJSONObject("shares").optString("count");
-                    }
-                    else module.shares = "0";
+                    } else module.shares = "0";
                     module.shares += " 分享";
-                    if(dataObject.has("full_picture")) {
+                    if (dataObject.has("full_picture")) {
                         module.image_picture_URL = dataObject.optString("full_picture");
-                    }
-                    else module.image_picture_URL = "";
+                    } else module.image_picture_URL = "";
                     module.image_page_URL = page_picture_url;
                     module.link_URL = dataObject.optString("permalink_url");
-                    Log.d("FB JSON Parser", "data "+ i + module.title + " " + module.date + " " + module.content + " " + module.image_picture_URL + " " +module.shares);
+                    if (dataObject.has("source")) {
+                        module.vedio_link_URL = dataObject.optString("source");
+                    } else module.vedio_link_URL = "";
+                    Log.d("FB JSON Parser", "data " + i + module.title + " " + module.date + " " + module.content + " " + module.image_picture_URL + " " + module.shares);
                     posts.add(module);
                 }
                 Log.d("FB JSON Parser", "data size " + posts.size());
@@ -318,6 +323,7 @@ public class MainActivity extends Activity {
         public ImageDownloaderTask(ImageView imageView) {
             imageViewReference = new WeakReference<ImageView>(imageView);
         }
+
         @Override
         protected Bitmap doInBackground(String... params) {
             return downloadBitmap(params[0]);
@@ -341,6 +347,7 @@ public class MainActivity extends Activity {
             }
         }
     }
+
     private Bitmap downloadBitmap(String url) {
         HttpURLConnection urlConnection = null;
         try {
@@ -364,6 +371,7 @@ public class MainActivity extends Activity {
         }
         return null;
     }
+
     private static String getStringFromInputStream(InputStream is)
             throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -411,24 +419,16 @@ public class MainActivity extends Activity {
             holder.textView_likes.setText(posts.get(position).likes);
             holder.textView_shares.setText(posts.get(position).shares);
             if (holder.imageView_post != null) {
-                if(posts.get(position).image_picture_URL != null){
+                if (posts.get(position).image_picture_URL != null) {
+                    holder.imageView_post.setVisibility(View.VISIBLE);
                     new ImageDownloaderTask(holder.imageView_post).execute(posts.get(position).image_picture_URL);
                 }
             }
             if (holder.imageView_page != null) {
-                if(posts.get(position).image_page_URL != null){
+                if (posts.get(position).image_page_URL != null) {
                     new ImageDownloaderTask(holder.imageView_page).execute(posts.get(position).image_page_URL);
                 }
             }
-            holder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Uri uri = Uri.parse(posts.get(position).link_URL);
-                    Intent intent = new Intent(MainActivity.this,WebActivity.class);
-                    intent.putExtra("url",posts.get(position).link_URL );
-                    startActivity(intent);
-                }
-            });
         }
 
         @Override
@@ -449,6 +449,7 @@ public class MainActivity extends Activity {
             TextView textView_likes;
             TextView textView_shares;
             CardView cardView;
+
             public ContactViewHolder(View convertView) {
                 super(convertView);
                 textView_title = (TextView) convertView.findViewById(R.id.textView_title);
@@ -459,8 +460,33 @@ public class MainActivity extends Activity {
                 textView_shares = (TextView) convertView.findViewById(R.id.textView_shares);
                 imageView_post = (ImageView) convertView.findViewById(R.id.imageView_post);
                 imageView_page = (ImageView) convertView.findViewById(R.id.imageView_page);
-                cardView = (CardView)convertView.findViewById(R.id.card_view);
+                cardView = (CardView) convertView.findViewById(R.id.card_view);
+
+                imageView_post.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = getAdapterPosition();
+                        if (posts.get(position).vedio_link_URL != null) {
+                            if (posts.get(position).vedio_link_URL != "") {
+                                callVidioView(posts.get(position).vedio_link_URL, "fb_video");
+                            }
+                        }
+                    }
+                });
             }
         }
+    }
+
+    public void callWebView(String url, String type) {
+        Intent intent = new Intent(MainActivity.this, WebActivity.class);
+        intent.putExtra("url", url);
+        intent.putExtra("type", type);
+        startActivity(intent);
+    }
+    public void callVidioView(String url, String type) {
+        Intent intent = new Intent(MainActivity.this, Custom_VideoView.class);
+        intent.putExtra("url", url);
+        intent.putExtra("type", type);
+        startActivity(intent);
     }
 }

@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox chk_remember, chk_keep_login;
     String scookies = null;
     HashMap<String, String> cookieMap;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

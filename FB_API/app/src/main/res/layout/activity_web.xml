@@ -6,10 +6,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.rainvisitor.fb_api.WebActivity">
-    <Toolbar
+    <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:id="@+id/redToolbar">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -17,6 +18,7 @@
             android:paddingRight="16dp"
             android:id="@+id/cancel"
             android:textColor="@color/black"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -37,7 +39,7 @@
                 android:textColor="@color/grey_900"
                 />
         </LinearLayout>
-    </Toolbar>
+    </android.support.v7.widget.Toolbar>
     <SeekBar
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
