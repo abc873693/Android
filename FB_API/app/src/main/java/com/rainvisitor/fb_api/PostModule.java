@@ -10,5 +10,7 @@ public class PostModule {
     public String image_picture_URL;
     public String image_page_URL;
     public String link_URL;
-    public String vedio_link_URL;
+    public String video_link_URL;
+    public String type;
+    public String image_json;
 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rainvisitor.fb_api.Custom_VideoView">
-    <VideoView
+    <com.rainvisitor.fb_api.MyVideoView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/myVideo" />

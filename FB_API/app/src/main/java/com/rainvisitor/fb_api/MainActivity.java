@@ -16,22 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,25 +33,20 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends Activity {
     public ArrayList<PostModule> posts = new ArrayList<>();
-    public CallbackManager callbackManager;
-    public AccessToken accessToken;
     public final String access_token = "EAAa2ZBnr08RMBAD2jm2CqGliLKacHHPxBbgpf67cAoZAGzDWTZBLg8QST9nQbpZCUGC9EhQKx10xd062G5ApM4mxn6JiZBLL8ABQNi76mACGkP2tj3Ro1OfZAgL72VUZCWbcMfZC0eZCYveQPbALFN8RwMZBEctqhH0F0ZD";
     String page_name = "", page_picture_url = "";
     public final String page_id = "496974947026732";
     //https://graph.facebook.com/496974947026732/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
     public SwipeRefreshLayout swipeRefreshLayout;
     public RecyclerView listView;
-    public Button loginButton;
     public final String SharedPrefer_data = "data";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        FacebookSdk.sdkInitialize(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
@@ -87,77 +72,17 @@ public class MainActivity extends Activity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        callbackManager = CallbackManager.Factory.create();
-        loginButton.setOnClickListener(new Button.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile", "user_friends"));
-            }
-        });
-        //幫 LoginManager 增加callback function
-        //這邊為了方便 直接寫成inner class
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-
-            //登入成功
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                //accessToken之後或許還會用到 先存起來
-                accessToken = loginResult.getAccessToken();
-                Log.d("FB", "access token got. token= " + loginResult.getAccessToken().getToken());
-                SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
-                data.edit()
-                        .putString("Access_token", loginResult.getAccessToken().getToken())
-                        .apply();
-                //send request and call graph api
-                GraphRequest request = GraphRequest.newMeRequest(
-                        accessToken,
-                        new GraphRequest.GraphJSONObjectCallback() {
-
-                            //當RESPONSE回來的時候
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-                                //讀出姓名 ID FB個人頁面連結
-                                Log.d("FB", "complete\n" + object);
-                                Log.d("FB", object.optString("name"));
-                                Log.d("FB", object.optString("link"));
-                                Log.d("FB", object.optString("id"));
-                            }
-                        });
-                //包入你想要得到的資料 送出request
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,link");
-                request.setParameters(parameters);
-                request.executeAsync();
-            }
-
-            //登入取消
-            @Override
-            public void onCancel() {
-                // App code
-                Log.d("FB", "CANCEL");
-            }
-
-            //登入失敗
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-                Log.d("FB", exception.toString());
-            }
-        });
     }
 
     private void init() {
         listView = (RecyclerView) findViewById(R.id.listView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.red_500, R.color.blue_500);  //設定swipeRefreshLayout更新時,圈圈的顏色
-        loginButton = (Button) findViewById(R.id.fb_login);
     }
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -231,8 +156,9 @@ public class MainActivity extends Activity {
 
     public class AsyncGetPost extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
-        private String targetURL = "https://graph.facebook.com/" + page_id + "/posts?fields=source,full_picture,shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&limit=100&show_expired=true&access_token=";
+        private String targetURL = "https://graph.facebook.com/" + page_id + "/posts?fields=full_picture,shares,permalink_url,story,created_time,message,likes.limit(0).summary(true),source,attachments{subattachments},type&locale=zh_TW&limit=25&offset=0&show_expired=true&access_token=";
         //https://graph.facebook.com/656114697817019/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
+        //posts?fields=full_picture,shares,permalink_url,story,created_time,message,likes.limit(0).summary(true),source,attachments{subattachments},type&locale=zh_TW&limit=25&offset=0&show_expired=true
         private ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
 
         @Override
@@ -297,17 +223,22 @@ public class MainActivity extends Activity {
                     module.image_page_URL = page_picture_url;
                     module.link_URL = dataObject.optString("permalink_url");
                     if (dataObject.has("source")) {
-                        module.vedio_link_URL = dataObject.optString("source");
-                    } else module.vedio_link_URL = "";
-                    Log.d("FB JSON Parser", "data " + i + module.title + " " + module.date + " " + module.content + " " + module.image_picture_URL + " " + module.shares);
+                        module.video_link_URL = dataObject.optString("source");
+                    } else module.video_link_URL = "";
+                    if (dataObject.has("attachments")) {
+                        String tmp = dataObject.getJSONObject("attachments").getJSONArray("data").toString();
+                        JSONObject attachObject = new JSONObject(tmp.substring(1, tmp.length() - 1));
+                        if (attachObject.has("subattachments")) {
+                            module.image_json = attachObject.getJSONObject("subattachments").toString();
+                        } else module.image_json = "";
+                    } else module.image_json = "";
+                    module.type = dataObject.optString("type");
+                    Log.d("FB JSON Parser", "data " + i + module.title + " " + module.date + " " + module.content + " " + module.image_picture_URL + " " + module.shares + "\n" + module.image_json);
                     posts.add(module);
                 }
                 Log.d("FB JSON Parser", "data size " + posts.size());
                 ContactAdapter customAdapter = new ContactAdapter(posts);
                 listView.setAdapter(customAdapter);
-                loginButton.setVisibility(View.GONE);
-                loginButton.setEnabled(false);
-                loginButton.setText("已登入");
             } catch (Exception e) {
                 Toast.makeText(MainActivity.this, "資料取得失敗!", Toast.LENGTH_LONG).show();
                 Log.e("FB JSON Parser", "Error parsing data " + e.toString());
@@ -466,11 +397,9 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         int position = getAdapterPosition();
-                        if (posts.get(position).vedio_link_URL != null) {
-                            if (posts.get(position).vedio_link_URL != "") {
-                                callVidioView(posts.get(position).vedio_link_URL, "fb_video");
-                            }
-                        }
+                        String type =  posts.get(position).type;
+                        if(type.equals("photo"))callImageView(posts.get(position).image_picture_URL, posts.get(position).image_json);
+                        else if(type.equals("video"))callVidioView(posts.get(position).video_link_URL, "fb_video");
                     }
                 });
             }
@@ -483,10 +412,18 @@ public class MainActivity extends Activity {
         intent.putExtra("type", type);
         startActivity(intent);
     }
+
     public void callVidioView(String url, String type) {
         Intent intent = new Intent(MainActivity.this, Custom_VideoView.class);
         intent.putExtra("url", url);
         intent.putExtra("type", type);
+        startActivity(intent);
+    }
+
+    public void callImageView(String url, String json) {
+        Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
+        intent.putExtra("image_json", json);
+        intent.putExtra("url", url);
         startActivity(intent);
     }
 }

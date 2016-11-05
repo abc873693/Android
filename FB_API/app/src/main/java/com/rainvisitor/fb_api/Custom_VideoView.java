@@ -1,14 +1,13 @@
 package com.rainvisitor.fb_api;
 
-import android.widget.MediaController;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.VideoView;
+import android.widget.MediaController;
 
 public class Custom_VideoView extends AppCompatActivity {
-    private VideoView vidView;
+    private MyVideoView vidView;
     private MediaStore.Video.Media vidControl;
     String vidAddress;
     private MediaController mc;
@@ -21,10 +20,11 @@ public class Custom_VideoView extends AppCompatActivity {
         }
         MediaController mc = new MediaController(this);
         Uri vidUri = Uri.parse(vidAddress);
-        vidView = (VideoView) findViewById(R.id.myVideo);
+        vidView = (MyVideoView) findViewById(R.id.myVideo);
         vidView.setMediaController(mc);
         vidView.requestFocus();
         vidView.setVideoURI(vidUri);
         vidView.start();
     }
+
 }
