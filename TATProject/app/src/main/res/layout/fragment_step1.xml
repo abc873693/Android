@@ -139,7 +139,7 @@
                             android:layout_height="match_parent"
                             android:id="@+id/product_total"
                             android:layout_weight="1"
-                            android:gravity="center|center_horizontal"
+                            android:gravity="bottom|center_horizontal"
                             tools:text="product_total" />
                         <LinearLayout
                             android:layout_width="match_parent"

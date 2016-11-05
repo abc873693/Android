@@ -240,8 +240,8 @@ public class ShoppingStep3Fragment extends Fragment {
             public void onClick(View v) {
                 if("".equals(name.getText().toString().trim())){
                     Toast.makeText(v.getContext(), "請輸入姓名！", Toast.LENGTH_LONG).show();
-                }else if(cell.getText().length()!=10 || ("".equals(cell.getText().toString().trim()))){
-                    Toast.makeText(v.getContext(), "請輸入正確電話號碼！", Toast.LENGTH_LONG).show();
+                }else if(cell.getText().length()!=10 || ("".equals(cell.getText().toString().trim())) || !(cell.getText().toString().substring(0,2).equals("09"))){
+                    Toast.makeText(v.getContext(), "請輸入正確電話號碼格式！", Toast.LENGTH_LONG).show();
                 }else if("請選擇縣市".equals(country.getText().toString().trim())){
                     Toast.makeText(v.getContext(), "請選擇縣市！", Toast.LENGTH_LONG).show();
                 }else if("請選擇地區".equals(section.getText().toString().trim())){
@@ -259,6 +259,11 @@ public class ShoppingStep3Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        section.setText("請選擇地區");
+        country.setText("請選擇縣市");
+        name.setText("");
+        cell.setText("");
+        address.setText("");
         Log.e("ShoppingStep3Fragment", "onResume");
     }
 
