@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.google.gson.Gson;
 import com.nail.tatproject.MainActivity;
 import com.nail.tatproject.R;
@@ -47,6 +49,7 @@ public class ShoppingStep1Fragment extends Fragment {
     public static final String Shopping_TABLE_NAME = "Shopping";
     private TATApplication Global;
     private RecyclerView listView;
+    private ContactAdapter customAdapter;
     private TextView product_total, products_price, products_discount, products_total;
     private ArrayList<Product> products = new ArrayList<>();
     private ArrayList<TATItem> IDs = new ArrayList<>();
@@ -114,6 +117,18 @@ public class ShoppingStep1Fragment extends Fragment {
         shoppincart = (LinearLayout) view.findViewById(R.id.shoppingcart);
         empty.setVisibility(View.GONE);
         shoppincart.setVisibility(View.VISIBLE);
+        listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.e("RecyclerView", "onScrollStateChanged");
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
         return view;
     }
 
@@ -190,7 +205,7 @@ public class ShoppingStep1Fragment extends Fragment {
                     product_total.setText("共" + products.size() + "項商品");
                     sum += (module.price * module.count);
                     Log.d("Product", "ID=" + module.id + " SubID=" + module.subid + " URL=" + module.image_URL + " price=" + module.price + " count=" + module.count + " max=" + module.product_max);
-                    ContactAdapter customAdapter = new ContactAdapter(products);
+                    customAdapter = new ContactAdapter(products);
                     listView.setAdapter(customAdapter);
                     LinearLayoutManager llm = new LinearLayoutManager(getActivity());
                     llm.setAutoMeasureEnabled(true);
@@ -323,6 +338,20 @@ public class ShoppingStep1Fragment extends Fragment {
         return null;
     }
 
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            Toast.makeText(getActivity(), "on Move", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            int position = viewHolder.getLayoutPosition();
+            removeAt(position);
+        }
+    };
+
     public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
         private List<com.nail.tatproject.moudle.Product> contactList;
@@ -357,6 +386,54 @@ public class ShoppingStep1Fragment extends Fragment {
                     new ImageDownloaderTask(holder.imageView_product).execute(products.get(position).image_URL);
                 }
             }
+
+            holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+
+            // Drag From Left
+            //holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, holder.swipeLayout.findViewById(R.id.bottom_wrapper1));
+
+            // Drag From Right
+            holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.swipeLayout.findViewById(R.id.bottom_wrapper));
+
+
+            // Handling different events when swiping
+            holder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
+                @Override
+                public void onClose(SwipeLayout layout) {
+                    //when the SurfaceView totally cover the BottomView.
+                }
+
+                @Override
+                public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+                    //you are swiping.
+                }
+
+                @Override
+                public void onStartOpen(SwipeLayout layout) {
+
+                }
+
+                @Override
+                public void onOpen(SwipeLayout layout) {
+                    //when the BottomView totally show.
+                }
+
+                @Override
+                public void onStartClose(SwipeLayout layout) {
+
+                }
+
+                @Override
+                public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+                    //when user's hand released.
+                }
+            });
+            holder.textView_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeAt(position);
+                }
+            });
         }
 
         @Override
@@ -375,7 +452,10 @@ public class ShoppingStep1Fragment extends Fragment {
             TextView textView_price;
             TextView textView_plus;
             TextView textView_minus;
+            TextView textView_collect;
+            TextView textView_delete;
             ImageButton button_cancel;
+            SwipeLayout swipeLayout;
 
             public ContactViewHolder(View convertView, final int position) {
                 super(convertView);
@@ -387,6 +467,9 @@ public class ShoppingStep1Fragment extends Fragment {
                 textView_plus = (TextView) convertView.findViewById(R.id.product_plus);
                 textView_minus = (TextView) convertView.findViewById(R.id.product_minus);
                 button_cancel = (ImageButton) convertView.findViewById(R.id.product_cancel);
+                textView_collect = (TextView) convertView.findViewById(R.id.tvCollect);
+                textView_delete = (TextView) convertView.findViewById(R.id.tvDelete);
+                swipeLayout = (SwipeLayout) convertView.findViewById(R.id.swipeLayout);
                 textView_plus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -443,30 +526,36 @@ public class ShoppingStep1Fragment extends Fragment {
                         int position = getAdapterPosition();
                         Log.d("position", position + "");
                         //刪除SQLlite資料
-                        Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
-                        sum -= products.get(position).price * products.get(position).count;
-                        removeAt(position);
-                        total_update();
-                        total_save();
-                        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        product_total.setText("共" + products.size() + "項商品");
-                        if (products.size() == 0) {
-                            empty.setVisibility(View.VISIBLE);
-                            shoppincart.setVisibility(View.GONE);
-                        }
+                        swipeLayout.open();
+                        //removeAt(position);
                     }
                 });
-            }
-
-            public void removeAt(int position) {
-                products.remove(position);
-                IDs.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, products.size());
+                textView_collect.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //收藏時的動作
+                    }
+                });
             }
         }
     }
 
+    private void removeAt(int position){
+        Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
+        sum -= products.get(position).price * products.get(position).count;
+        customAdapter.notifyItemRemoved(position);
+        products.remove(position);
+        IDs.remove(position);
+        customAdapter.notifyItemRangeChanged(position, products.size());
+        total_update();
+        total_save();
+        //listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        product_total.setText("共" + products.size() + "項商品");
+        if (products.size() == 0) {
+            empty.setVisibility(View.VISIBLE);
+            shoppincart.setVisibility(View.GONE);
+        }
+    }
     private void total_update() {
         products_price.setText("$" + String.format("%,d", sum));
         products_discount.setText("-$" + String.format("%,d", discount));

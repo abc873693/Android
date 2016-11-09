@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,6 +75,7 @@ public class MainActivity extends Activity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+
     }
 
     private void init() {
@@ -360,6 +364,24 @@ public class MainActivity extends Activity {
                     new ImageDownloaderTask(holder.imageView_page).execute(posts.get(position).image_page_URL);
                 }
             }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Activity activity = new Activity();
+                    String url =  posts.get(position).link_URL;
+                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                    Bitmap icon = BitmapFactory
+                            .decodeResource(getResources(), R.drawable.share);
+                    builder.setActionButton(icon, "share",
+                            Utils.createSharePendingIntent(MainActivity.this
+                                    , url));
+                    builder.setToolbarColor(
+                            ContextCompat.getColor(MainActivity.this, R.color.blue_300));
+                    CustomTabsIntent customTabsIntent = builder.build();
+                    customTabsIntent.launchUrl(MainActivity.this
+                            , Uri.parse(url));
+                }
+            });
         }
 
         @Override
