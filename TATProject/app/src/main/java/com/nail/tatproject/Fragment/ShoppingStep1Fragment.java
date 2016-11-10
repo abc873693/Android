@@ -63,30 +63,6 @@ public class ShoppingStep1Fragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.e("ShoppingStep1Fragment", "onCreate");
         setRetainInstance(true);
-        products.clear();
-        IDs.clear();
-        sum = 0;
-        discount = 0;
-        error = 0;
-        Global = (TATApplication) getActivity().getApplicationContext();
-        // 如果資料庫是空的，就建立一些範例資料
-        // 這是為了方便測試用的，完成應用程式以後可以拿掉
-        if (Global.tatdb.getCount(TATDB.Shopping_TABLE_NAME) == 0) {
-            Global.tatdb.sample();
-        }
-        //Global.tatdb.sample();
-        //listView.setVisibility(View.GONE);
-        // 取得所有記事資料
-        for (TATItem item : Global.tatdb.getAll(TATDB.Shopping_TABLE_NAME)) {
-            String id = item.getProductID();
-            long addtime = item.getAddTime();
-            int count = item.getCount();
-            Log.d("SQLite date", "id=" + id + " addtime" + addtime + " count" + count);
-            IDs.add(new TATItem(id, addtime, count));
-        }
-        for (TATItem i : IDs) {
-            new AsyncGetProduct().execute("http://tatvip.ezsale.tw/tat/api/getprod.ashx", i.getProductID(), i.getCount() + "");
-        }
     }
 
     @Override
@@ -111,12 +87,36 @@ public class ShoppingStep1Fragment extends Fragment {
         products_price = (TextView) view.findViewById(R.id.products_price);
         products_discount = (TextView) view.findViewById(R.id.products_discount);
         products_total = (TextView) view.findViewById(R.id.products_total);
-        listView.setNestedScrollingEnabled(false);
-        listView.setHasFixedSize(true);
         empty = (LinearLayout) view.findViewById(R.id.empty);
         shoppincart = (LinearLayout) view.findViewById(R.id.shoppingcart);
+        listView.setNestedScrollingEnabled(false);
+        listView.setHasFixedSize(true);
         empty.setVisibility(View.GONE);
         shoppincart.setVisibility(View.VISIBLE);
+        products.clear();
+        IDs.clear();
+        sum = 0;
+        discount = 0;
+        error = 0;
+        Global = (TATApplication) getActivity().getApplicationContext();
+        // 如果資料庫是空的，就建立一些範例資料
+        // 這是為了方便測試用的，完成應用程式以後可以拿掉
+        if (Global.tatdb.getCount(TATDB.Shopping_TABLE_NAME) == 0) {
+            Global.tatdb.sample();
+        }
+        //Global.tatdb.sample();
+        //listView.setVisibility(View.GONE);
+        // 取得所有記事資料
+        for (TATItem item : Global.tatdb.getAll(TATDB.Shopping_TABLE_NAME)) {
+            String id = item.getProductID();
+            long addtime = item.getAddTime();
+            int count = item.getCount();
+            Log.d("SQLite date", "id=" + id + " addtime" + addtime + " count" + count);
+            IDs.add(new TATItem(id, addtime, count));
+        }
+        for (TATItem i : IDs) {
+            new AsyncGetProduct().execute("http://tatvip.ezsale.tw/tat/api/getprod.ashx", i.getProductID(), i.getCount() + "");
+        }
         listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -185,14 +185,14 @@ public class ShoppingStep1Fragment extends Fragment {
             super.onPostExecute(result);
             if (result == 1) {
                 try {
-                    Log.d("Product Json",Reply);
+                    Log.d("Product Json", Reply);
                     JSONObject json_data = new JSONObject(Reply);
                     com.nail.tatproject.moudle.Product module = new com.nail.tatproject.moudle.Product();
                     module.id = json_data.optInt("ID");
                     module.subid = json_data.optInt("SubID");
                     module.image_URL = json_data.optString("Img1");
                     int tmp_price = json_data.optInt("Value1");
-                    module.price = tmp_price==0 ? 1500: tmp_price;
+                    module.price = tmp_price == 0 ? 1500 : tmp_price;
                     module.name = json_data.optString("Title");
                     if (!json_data.isNull("Stock")) {
                         if (json_data.getJSONObject("Stock").has("Num")) {
@@ -338,7 +338,7 @@ public class ShoppingStep1Fragment extends Fragment {
         return null;
     }
 
-    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             Toast.makeText(getActivity(), "on Move", Toast.LENGTH_SHORT).show();
@@ -394,8 +394,6 @@ public class ShoppingStep1Fragment extends Fragment {
 
             // Drag From Right
             holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.swipeLayout.findViewById(R.id.bottom_wrapper));
-
-
             // Handling different events when swiping
             holder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
                 @Override
@@ -426,12 +424,6 @@ public class ShoppingStep1Fragment extends Fragment {
                 @Override
                 public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
                     //when user's hand released.
-                }
-            });
-            holder.textView_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    removeAt(position);
                 }
             });
         }
@@ -536,26 +528,37 @@ public class ShoppingStep1Fragment extends Fragment {
                         //收藏時的動作
                     }
                 });
+                textView_delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = getAdapterPosition();
+                        removeAt(position);
+                    }
+                });
             }
         }
     }
 
-    private void removeAt(int position){
+    private void removeAt(int position) {
+
         Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
         sum -= products.get(position).price * products.get(position).count;
         customAdapter.notifyItemRemoved(position);
         products.remove(position);
         IDs.remove(position);
+        Log.d("delete position", position + "size=" + products.size());
         customAdapter.notifyItemRangeChanged(position, products.size());
         total_update();
         total_save();
-        //listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listView.removeAllViewsInLayout();
+        listView.setAdapter(customAdapter);
         product_total.setText("共" + products.size() + "項商品");
         if (products.size() == 0) {
             empty.setVisibility(View.VISIBLE);
             shoppincart.setVisibility(View.GONE);
         }
     }
+
     private void total_update() {
         products_price.setText("$" + String.format("%,d", sum));
         products_discount.setText("-$" + String.format("%,d", discount));
@@ -565,7 +568,7 @@ public class ShoppingStep1Fragment extends Fragment {
     private void total_save() {
         SharedPreferences data = getActivity().getSharedPreferences("data", 0);
         data.edit()
-                .putInt("products_sum", sum )
+                .putInt("products_sum", sum)
                 .putInt("products_discount", discount)
                 .putInt("products_count", products.size())
                 .apply();
