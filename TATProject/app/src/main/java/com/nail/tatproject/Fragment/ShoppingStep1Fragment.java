@@ -28,6 +28,7 @@ import com.nail.tatproject.SQLite.TATItem;
 import com.nail.tatproject.TATApplication;
 import com.nail.tatproject.moudle.Product;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -82,13 +83,13 @@ public class ShoppingStep1Fragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
         listView = (RecyclerView) view.findViewById(R.id.listView_product);
-        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         product_total = (TextView) view.findViewById(R.id.product_total);
         products_price = (TextView) view.findViewById(R.id.products_price);
         products_discount = (TextView) view.findViewById(R.id.products_discount);
         products_total = (TextView) view.findViewById(R.id.products_total);
         empty = (LinearLayout) view.findViewById(R.id.empty);
         shoppincart = (LinearLayout) view.findViewById(R.id.shoppingcart);
+        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listView.setNestedScrollingEnabled(false);
         listView.setHasFixedSize(true);
         empty.setVisibility(View.GONE);
@@ -105,7 +106,6 @@ public class ShoppingStep1Fragment extends Fragment {
             Global.tatdb.sample();
         }
         //Global.tatdb.sample();
-        //listView.setVisibility(View.GONE);
         // 取得所有記事資料
         for (TATItem item : Global.tatdb.getAll(TATDB.Shopping_TABLE_NAME)) {
             String id = item.getProductID();
@@ -149,7 +149,6 @@ public class ShoppingStep1Fragment extends Fragment {
         Items(int newid) {
             ID = newid;
         }
-
         int ID = 1;
     }
 
@@ -195,9 +194,13 @@ public class ShoppingStep1Fragment extends Fragment {
                     module.price = tmp_price == 0 ? 1500 : tmp_price;
                     module.name = json_data.optString("Title");
                     if (!json_data.isNull("Stock")) {
-                        if (json_data.getJSONObject("Stock").has("Num")) {
+                        Log.d("Stock",json_data.getJSONArray("Stock").toString());
+                        JSONArray jsonArray = json_data.getJSONArray("Stock");
+                        /*JSONObject dataObject = jsonArray.getJSONObject(0);
+                        if (dataObject.has("Num")) {
                             module.product_max = json_data.getJSONObject("Stock").optInt("Num");
-                        } else module.product_max = 10;
+                        } else*/
+                        module.product_max = 10;
                     } else module.product_max = 10;
                     module.type = module.id + "";
                     module.count = receive_count;

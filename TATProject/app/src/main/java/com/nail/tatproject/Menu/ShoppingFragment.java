@@ -42,7 +42,9 @@ public class ShoppingFragment extends Fragment {
         Log.e("ShoppingFragment", "onCreateView" + getArguments().getInt(ARG_SECTION_NUMBER));
         View view = inflater.inflate(R.layout.fragment_shopping, container, false);
         Global = (TATApplication) getActivity().getApplicationContext();
-        getChildFragmentManager().beginTransaction().add(R.id.shopping_container, Global.ShoppingList.get(Global.ShoppingStep)).commit();
+        if(!Global.ShoppingList.get(Global.ShoppingStep).isAdded()){
+            getChildFragmentManager().beginTransaction().add(R.id.shopping_container, Global.ShoppingList.get(Global.ShoppingStep)).commit();
+        }
         view.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
