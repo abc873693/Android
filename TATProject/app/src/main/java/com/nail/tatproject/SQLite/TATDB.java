@@ -169,7 +169,7 @@ public class TATDB {
     public void sample() {
         for (int i = 0; i < 10; i++) {
             Random r = new Random();
-            int x = r.nextInt(3111) - 1;
+            int x = r.nextInt(900) - 1;
             TATItem item = new TATItem(x + "", new Date().getTime());
             insert(Shopping_TABLE_NAME, item);
         }

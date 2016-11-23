@@ -1,6 +1,8 @@
 package com.nail.tatproject.Fragment;
 
+
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,7 +22,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ecpay.tw.mobilesdk.BANKNAME;
+import com.ecpay.tw.mobilesdk.CreateTrade;
+import com.ecpay.tw.mobilesdk.ENVIRONMENT;
+import com.ecpay.tw.mobilesdk.OptionalATM;
+import com.ecpay.tw.mobilesdk.OptionalCVS;
+import com.ecpay.tw.mobilesdk.PAYMENTTYPE;
+import com.ecpay.tw.mobilesdk.PaymentActivity;
+import com.ecpay.tw.mobilesdk.STORETYPE;
 import com.google.gson.Gson;
+import com.nail.tatproject.Config;
 import com.nail.tatproject.MainActivity;
 import com.nail.tatproject.R;
 import com.nail.tatproject.SQLite.TATDB;
@@ -28,6 +39,7 @@ import com.nail.tatproject.SQLite.TATItem;
 import com.nail.tatproject.TATApplication;
 import com.nail.tatproject.moudle.Product;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -63,7 +75,7 @@ public class ShoppingStep3Fragment extends Fragment {
     private ArrayList<String> COUNTRY = new ArrayList<>();
     private int COUNTRY_INDEX = -1;
     public int error = 0;
-
+    private int SUM = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,7 +176,7 @@ public class ShoppingStep3Fragment extends Fragment {
         int sum = data.getInt("products_sum", 0);
         int discount = data.getInt("products_discount", 0);
         int ship = data.getInt("products_ship", 0);
-        int SUM = sum - discount + discount;
+        SUM = sum - discount + discount;
         listView.setNestedScrollingEnabled(false);
         listView.setHasFixedSize(true);
         final_total.setText("$" + String.format("%,d", SUM));
@@ -250,6 +262,47 @@ public class ShoppingStep3Fragment extends Fragment {
                     Toast.makeText(v.getContext(), "請輸入地址！", Toast.LENGTH_LONG).show();
                 }else{
                     Toast.makeText(v.getContext(), "你的姓名："+name.getText()+"\n你的電話："+cell.getText()+"\n你的地址："+country.getText()+section.getText()+address.getText(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getActivity(), PaymentActivity.class);
+                    SharedPreferences data = getActivity().getSharedPreferences("data", 0);
+                    String type = data.getString("paymentType","null");
+                    PAYMENTTYPE paymentType = PAYMENTTYPE.ALL;
+                    if(type.substring(0,3).equals("ATM")){
+                        //自動櫃員機(ATM)
+                        paymentType = PAYMENTTYPE.ATM;
+                        //選擇性參數，允許繳費有效天數(1~60)
+//				OptionalATM oOptionalATM = new OptionalATM(7);
+                        OptionalATM oOptionalATM = new OptionalATM(7, BANKNAME.parse2BankName(type.substring(4,type.length())));
+                        intent.putExtra(PaymentActivity.EXTRA_OPTIONAL, oOptionalATM);
+                        Log.d("paymentType", "ATM for " + type.substring(4,type.length()-1) +" " + BANKNAME.parse2BankName(type.substring(4,type.length())));
+                    }else if(type.substring(0,3).equals("CVS")){
+                        //超商代碼(CVS)
+                        paymentType = PAYMENTTYPE.CVS;
+                        //選擇性參數，交易描述1~4，會出現在超商繳費平台螢幕上
+//				OptionalCVS oOptionalCVS = new OptionalCVS("測試1", "測試2", "", "", null);
+                        OptionalCVS oOptionalCVS = new OptionalCVS("測試1", "測試2", "", "", STORETYPE.parse2StoreType(type.substring(4,type.length())));
+                        intent.putExtra(PaymentActivity.EXTRA_OPTIONAL, oOptionalCVS);
+                        Log.d("paymentType", "ATM for " + type.substring(4,type.length()-1) +" " + STORETYPE.parse2StoreType(type.substring(4,type.length())));
+                    }else if(type.substring(0,6).equals("Credit")){
+                        //信用卡
+                        paymentType = PAYMENTTYPE.CREDIT;
+                        Log.d("paymentType", "CREDIT");
+                    }else{
+                        paymentType = PAYMENTTYPE.ALL;
+                        Log.d("paymentType", "ALL");
+                    }
+                    CreateTrade oCreateTrade = new CreateTrade(
+                            Config.MerchantID_test,         //廠商編號
+                            Config.AppCode_test,            //App代碼
+                            Config.getMerchantTradeNo(),    //廠商交易編號
+                            Config.getMerchantTradeDate(),  //廠商交易時間
+                            SUM,        //交易金額
+                            Config.TradeDesc_test,          //交易描述
+                            Config.ItemName_test,           //商品名稱
+                            paymentType,                    //預設付款方式
+                            ENVIRONMENT.STAGE);             //介接環境 : STAGE為測試，OFFICIAL為正式
+
+                    intent.putExtra(PaymentActivity.EXTRA_PAYMENT, oCreateTrade);
+                    startActivityForResult(intent, Config.REQUEST_CODE);
                 }
             }
         });
@@ -264,6 +317,11 @@ public class ShoppingStep3Fragment extends Fragment {
         name.setText("");
         cell.setText("");
         address.setText("");
+        section.setText("國姓鄉");
+        country.setText("南投縣");
+        name.setText("房志剛");
+        cell.setText("0988584450");
+        address.setText("家");
         Log.e("ShoppingStep3Fragment", "onResume");
     }
 
@@ -322,11 +380,15 @@ public class ShoppingStep3Fragment extends Fragment {
                     module.price = 1500;
                     module.name = json_data.optString("Title");
                     if (!json_data.isNull("Stock")) {
-                        if (json_data.getJSONObject("Stock").has("Num")) {
-                            module.product_max = json_data.getJSONObject("Stock").optInt("Num");
-                        } else module.product_max = 10;
+                        Log.d("Stock",json_data.getJSONArray("Stock").toString());
+                        JSONArray jsonArray = json_data.getJSONArray("Stock");
+                        JSONObject dataObject = jsonArray.getJSONObject(0);
+                        module.type = dataObject.optString("SizeName") + dataObject.optString("ColorName") + module.id;
+                        if (dataObject.has("Num")) {
+                            module.product_max = dataObject.optInt("Num");
+                        } else
+                            module.product_max = 10;
                     } else module.product_max = 10;
-                    module.type = module.id + "";
                     module.count = receive_count;
                     products.add(module);
                     Log.d("Product", "ID=" + module.id + " SubID=" + module.subid + " URL=" + module.image_URL + " price=" + module.price + " count=" + module.count + " max=" + module.product_max);

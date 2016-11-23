@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/EcpayMobileSDK/EcpayMobileSDK.iml" filepath="$PROJECT_DIR$/EcpayMobileSDK/EcpayMobileSDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EcpayMobileSDKDemo/EcpayMobileSDKDemo.iml" filepath="$PROJECT_DIR$/EcpayMobileSDKDemo/EcpayMobileSDKDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/TATProject.iml" filepath="$PROJECT_DIR$/TATProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

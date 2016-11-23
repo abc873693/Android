@@ -9,6 +9,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/EcpayMobileSDK" />
+            <option value="$PROJECT_DIR$/EcpayMobileSDKDemo" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

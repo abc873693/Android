@@ -1,0 +1,88 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="${relativePackage}.${activityClass}" >
+	
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:text="請選擇預設付款方式" />
+	
+    <Button android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:id="@+id/btnAll"
+        android:text="全部" />
+    
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+         android:layout_marginTop="20dp" >
+        
+         <Button android:layout_width="120dp"
+        android:layout_height="50dp"   
+        android:id="@+id/btnATM"
+        android:layout_gravity="center_horizontal"
+        android:text="ATM" />
+        
+         <Spinner
+        android:id="@+id/spinner_ATM"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content" />
+         
+    </LinearLayout>
+    
+    
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+         android:layout_marginTop="20dp" >
+        
+        <Button android:layout_width="120dp"
+        android:layout_height="50dp"
+       	android:layout_gravity="center_horizontal"
+        android:id="@+id/btnCVS"
+        android:text="超商代碼" />
+        
+        <Spinner
+        android:id="@+id/spinner_CVS"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content" />
+    </LinearLayout>
+    
+    
+    
+    <Button android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:id="@+id/btnCredit"
+        android:text="信用卡" />
+    
+    <Button android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:id="@+id/btnCreditInstallment"
+        android:text="信用卡(分期)" />
+    
+    <Button android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:id="@+id/btnCreditPeriodAmount"
+        android:text="信用卡(定期定額)" />
+
+    
+</LinearLayout>
+

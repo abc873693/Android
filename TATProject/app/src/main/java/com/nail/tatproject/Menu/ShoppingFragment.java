@@ -1,5 +1,6 @@
 package com.nail.tatproject.Menu;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -42,22 +43,28 @@ public class ShoppingFragment extends Fragment {
         Log.e("ShoppingFragment", "onCreateView" + getArguments().getInt(ARG_SECTION_NUMBER));
         View view = inflater.inflate(R.layout.fragment_shopping, container, false);
         Global = (TATApplication) getActivity().getApplicationContext();
-        if(!Global.ShoppingList.get(Global.ShoppingStep).isAdded()){
+        if (!Global.ShoppingList.get(Global.ShoppingStep).isAdded()) {
             getChildFragmentManager().beginTransaction().add(R.id.shopping_container, Global.ShoppingList.get(Global.ShoppingStep)).commit();
         }
         view.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Global.tatdb.getCount(TATDB.Shopping_TABLE_NAME) == 0 && Global.ShoppingStep==0){
+                SharedPreferences data = getActivity().getSharedPreferences("data", 0);
+                String paymentType = data.getString("paymentType", "null").toString();
+                if (Global.tatdb.getCount(TATDB.Shopping_TABLE_NAME) == 0 && Global.ShoppingStep == 0) {
                     Toast.makeText(getActivity(), "購物車是空的", Toast.LENGTH_LONG).show();
-                }
-                else if(Global.ShoppingStep < 2) {
+                } else if (Global.ShoppingStep == 1 && paymentType.equals("null")) {
+                    Toast.makeText(getActivity(), "請選擇付款方式", Toast.LENGTH_LONG).show();
+                } else if (Global.ShoppingStep < 2) {
                     Global.ShoppingStep += 1;
-                    if(Global.ShoppingStep == 2)view.findViewById(R.id.button).setVisibility(View.GONE);
+                    if (Global.ShoppingStep == 2)
+                        view.findViewById(R.id.button).setVisibility(View.GONE);
                     getChildFragmentManager().beginTransaction().replace(R.id.shopping_container, Global.ShoppingList.get(Global.ShoppingStep)).commit();
                 }
             }
         });
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
         return view;
     }
 

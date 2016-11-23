@@ -156,19 +156,20 @@ public class ShoppingStep1Fragment extends Fragment {
         //================================================================
         String Reply;
         int receive_count = 1;
-
+        int receicve_id = 0;
         @Override
         protected Integer doInBackground(String... param) {
             //get Data 單存取資料
             Gson gson = new Gson();
             String content = null;
+
             try {
                 content = "CheckM=" + URLEncoder.encode("286e5560eeac9d7ecb7ecbb6968148c7", "UTF-8");
                 content += "&SiteID=" + URLEncoder.encode("778", "UTF-8");
                 content += "&Type=" + URLEncoder.encode("4", "UTF-8");
-                int id = Integer.valueOf(param[1]);
+                receicve_id = Integer.valueOf(param[1]);
                 receive_count = Integer.valueOf(param[2]);
-                content += "&Items=" + gson.toJson(new Items(id));
+                content += "&Items=" + gson.toJson(new Items(receicve_id));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 return 0;
@@ -187,7 +188,8 @@ public class ShoppingStep1Fragment extends Fragment {
                     Log.d("Product Json", Reply);
                     JSONObject json_data = new JSONObject(Reply);
                     com.nail.tatproject.moudle.Product module = new com.nail.tatproject.moudle.Product();
-                    module.id = json_data.optInt("ID");
+                    module.id = receicve_id;
+                    //module.id = json_data.optInt("ID")
                     module.subid = json_data.optInt("SubID");
                     module.image_URL = json_data.optString("Img1");
                     int tmp_price = json_data.optInt("Value1");
@@ -196,13 +198,13 @@ public class ShoppingStep1Fragment extends Fragment {
                     if (!json_data.isNull("Stock")) {
                         Log.d("Stock",json_data.getJSONArray("Stock").toString());
                         JSONArray jsonArray = json_data.getJSONArray("Stock");
-                        /*JSONObject dataObject = jsonArray.getJSONObject(0);
+                        JSONObject dataObject = jsonArray.getJSONObject(0);
+                        module.type = dataObject.optString("SizeName") + dataObject.optString("ColorName") + module.id;
                         if (dataObject.has("Num")) {
-                            module.product_max = json_data.getJSONObject("Stock").optInt("Num");
-                        } else*/
+                            module.product_max = dataObject.optInt("Num");
+                        } else
                         module.product_max = 10;
                     } else module.product_max = 10;
-                    module.type = module.id + "";
                     module.count = receive_count;
                     products.add(module);
                     product_total.setText("共" + products.size() + "項商品");
@@ -543,7 +545,7 @@ public class ShoppingStep1Fragment extends Fragment {
     }
 
     private void removeAt(int position) {
-
+        Log.d("remove at",position+" ID="+ products.get(position).id);
         Global.tatdb.delete(Shopping_TABLE_NAME, products.get(position).id + "");
         sum -= products.get(position).price * products.get(position).count;
         customAdapter.notifyItemRemoved(position);
@@ -574,6 +576,7 @@ public class ShoppingStep1Fragment extends Fragment {
                 .putInt("products_sum", sum)
                 .putInt("products_discount", discount)
                 .putInt("products_count", products.size())
+                .putString("paymentType", "null")
                 .apply();
     }
 }

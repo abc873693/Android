@@ -414,25 +414,37 @@ public class MainActivity extends Activity {
                 imageView_post = (ImageView) convertView.findViewById(R.id.imageView_post);
                 imageView_page = (ImageView) convertView.findViewById(R.id.imageView_page);
                 cardView = (CardView) convertView.findViewById(R.id.card_view);
-
+                cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = getAdapterPosition();
+                        callWebView(posts.get(position).link_URL);
+                    }
+                });
                 imageView_post.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         int position = getAdapterPosition();
-                        String type =  posts.get(position).type;
+                        /*String type =  posts.get(position).type;
                         if(type.equals("photo"))callImageView(posts.get(position).image_picture_URL, posts.get(position).image_json);
-                        else if(type.equals("video"))callVidioView(posts.get(position).video_link_URL, "fb_video");
+                        else if(type.equals("video"))callVidioView(posts.get(position).video_link_URL, "fb_video");*/
+                        callWebView(posts.get(position).link_URL);
                     }
                 });
             }
         }
     }
 
-    public void callWebView(String url, String type) {
-        Intent intent = new Intent(MainActivity.this, WebActivity.class);
+    public void callWebView(String url) {
+        /*Intent intent = new Intent(MainActivity.this, WebActivity.class);
         intent.putExtra("url", url);
-        intent.putExtra("type", type);
-        startActivity(intent);
+        //intent.putExtra("type", type);
+        startActivity(intent);*/
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        builder.setToolbarColor(getResources().getColor(R.color.blue_300));
+        customTabsIntent.launchUrl(this, Uri.parse(url));
+        Log.d("URL",url);
     }
 
     public void callVidioView(String url, String type) {
