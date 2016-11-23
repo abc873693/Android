@@ -11,6 +11,7 @@ public class Custom_VideoView extends AppCompatActivity {
     private MediaStore.Video.Media vidControl;
     String vidAddress;
     private MediaController mc;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

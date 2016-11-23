@@ -40,22 +40,19 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     public ArrayList<PostModule> posts = new ArrayList<>();
-    public final String access_token = "EAAa2ZBnr08RMBAD2jm2CqGliLKacHHPxBbgpf67cAoZAGzDWTZBLg8QST9nQbpZCUGC9EhQKx10xd062G5ApM4mxn6JiZBLL8ABQNi76mACGkP2tj3Ro1OfZAgL72VUZCWbcMfZC0eZCYveQPbALFN8RwMZBEctqhH0F0ZD";
+    public String access_token = "EAAa2ZBnr08RMBAD2jm2CqGliLKacHHPxBbgpf67cAoZAGzDWTZBLg8QST9nQbpZCUGC9EhQKx10xd062G5ApM4mxn6JiZBLL8ABQNi76mACGkP2tj3Ro1OfZAgL72VUZCWbcMfZC0eZCYveQPbALFN8RwMZBEctqhH0F0ZD";
     String page_name = "", page_picture_url = "";
     public final String page_id = "496974947026732";
     //https://graph.facebook.com/496974947026732/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
     public SwipeRefreshLayout swipeRefreshLayout;
     public RecyclerView listView;
     public final String SharedPrefer_data = "data";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-        Log.d("SharedPreferences", "SharedPreferences access token = " + access_token);
-        new AsyncGetName().execute();
-        new AsyncGetPost().execute();
+        new AsyncGetAccessToken().execute();
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setAutoMeasureEnabled(true);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -103,10 +100,65 @@ public class MainActivity extends Activity {
         AppEventsLogger.deactivateApp(this);
     }
 
+    public class AsyncGetAccessToken extends AsyncTask<String, String, String> {
+        private HttpURLConnection conn = null;
+        private String app_id = "1890036781216019";
+        private String client_secret=  "436042e789f65561149034da5c736774";
+        private String targetURL = "https://graph.facebook.com/v2.6/oauth/access_token?client_id=" + app_id + "&client_secret="
+                + client_secret + "&grant_type=client_credentials";
+        //https://graph.facebook.com/v2.6/oauth/access_token?client_id=1890036781216019&client_secret=436042e789f65561149034da5c736774&grant_type=client_credentials
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                URL mURL = new URL(targetURL);
+                conn = (HttpURLConnection) mURL.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(10000);
+                int responseCode = conn.getResponseCode();
+                if (responseCode == 200) {
+                    InputStream is = conn.getInputStream();
+                    return getStringFromInputStream(is);
+                } else {
+                    return ("Connect Error!!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.d("data", result);
+            try {
+                posts.clear();
+                JSONObject json_data = new JSONObject(result);
+                access_token = json_data.optString("access_token");
+                Log.d("access_token", access_token);
+            } catch (Exception e) {
+                Toast.makeText(MainActivity.this, "資料取得失敗!", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+            finally {
+                new AsyncGetName().execute();
+                new AsyncGetPost().execute();
+            }
+        }
+    }
+
     public class AsyncGetName extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
         SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
-        private String targetURL = "https://graph.facebook.com/" + page_id + "?fields=picture,name&access_token=";
+        private String targetURL = "https://graph.facebook.com/v2.6/" + page_id + "?fields=picture,name&access_token=";
 
         @Override
         protected void onPreExecute() {
@@ -160,7 +212,7 @@ public class MainActivity extends Activity {
 
     public class AsyncGetPost extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
-        private String targetURL = "https://graph.facebook.com/" + page_id + "/posts?fields=full_picture,shares,permalink_url,story,created_time,message,likes.limit(0).summary(true),source,attachments{subattachments},type&locale=zh_TW&limit=25&offset=0&show_expired=true&access_token=";
+        private String targetURL = "https://graph.facebook.com/v2.6/" + page_id + "/posts?fields=full_picture,shares,permalink_url,story,created_time,message,likes.limit(0).summary(true),source,attachments{subattachments},type&locale=zh_TW&limit=25&offset=0&show_expired=true&access_token=";
         //https://graph.facebook.com/656114697817019/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
         //posts?fields=full_picture,shares,permalink_url,story,created_time,message,likes.limit(0).summary(true),source,attachments{subattachments},type&locale=zh_TW&limit=25&offset=0&show_expired=true
         private ProgressDialog pdLoading = new ProgressDialog(MainActivity.this);
