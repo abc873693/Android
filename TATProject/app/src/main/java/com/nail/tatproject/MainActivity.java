@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private TATApplication Global; // 全域變數
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private MenuItem menuSearchItem;
     private ActionBarDrawerToggle toggle;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         initFragment(savedInstanceState);
+        View headerView = navigationView.getHeaderView(0);
+        textView = (TextView) headerView.findViewById(R.id.textView);
     }
 
     @Override
