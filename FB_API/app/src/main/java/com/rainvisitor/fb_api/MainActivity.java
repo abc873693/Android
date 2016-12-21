@@ -2,8 +2,8 @@ package com.rainvisitor.fb_api;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -39,14 +39,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    public ArrayList<PostModule> posts = new ArrayList<>();
-    public String access_token = "EAAa2ZBnr08RMBAD2jm2CqGliLKacHHPxBbgpf67cAoZAGzDWTZBLg8QST9nQbpZCUGC9EhQKx10xd062G5ApM4mxn6JiZBLL8ABQNi76mACGkP2tj3Ro1OfZAgL72VUZCWbcMfZC0eZCYveQPbALFN8RwMZBEctqhH0F0ZD";
-    String page_name = "", page_picture_url = "";
-    public final String page_id = "496974947026732";
-    //https://graph.facebook.com/496974947026732/posts?fields=shares,permalink_url,story,created_time,picture,message,likes.limit(0).summary(true)&access_token=
-    public SwipeRefreshLayout swipeRefreshLayout;
-    public RecyclerView listView;
-    public final String SharedPrefer_data = "data";
+    private ArrayList<PostModule> posts = new ArrayList<>();
+    private String access_token;
+    private String page_name = "", page_picture_url = "";
+    private final String page_id = "496974947026732";
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView listView;
+    private Context context  = getApplicationContext();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,9 +103,10 @@ public class MainActivity extends Activity {
     public class AsyncGetAccessToken extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
         private String app_id = "1890036781216019";
-        private String client_secret=  "436042e789f65561149034da5c736774";
+        private String client_secret = "436042e789f65561149034da5c736774";
         private String targetURL = "https://graph.facebook.com/v2.6/oauth/access_token?client_id=" + app_id + "&client_secret="
                 + client_secret + "&grant_type=client_credentials";
+
         //https://graph.facebook.com/v2.6/oauth/access_token?client_id=1890036781216019&client_secret=436042e789f65561149034da5c736774&grant_type=client_credentials
         @Override
         protected void onPreExecute() {
@@ -147,8 +148,7 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 Toast.makeText(MainActivity.this, "資料取得失敗!", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
-            }
-            finally {
+            } finally {
                 new AsyncGetName().execute();
                 new AsyncGetPost().execute();
             }
@@ -157,7 +157,6 @@ public class MainActivity extends Activity {
 
     public class AsyncGetName extends AsyncTask<String, String, String> {
         private HttpURLConnection conn = null;
-        SharedPreferences data = getSharedPreferences(SharedPrefer_data, 0);
         private String targetURL = "https://graph.facebook.com/v2.6/" + page_id + "?fields=picture,name&access_token=";
 
         @Override
@@ -237,8 +236,7 @@ public class MainActivity extends Activity {
                 int responseCode = conn.getResponseCode();
                 if (responseCode == 200) {
                     InputStream is = conn.getInputStream();
-                    String state = getStringFromInputStream(is);
-                    return state;
+                    return getStringFromInputStream(is);
                 } else {
                     return ("Connect Error!!");
                 }
@@ -307,8 +305,8 @@ public class MainActivity extends Activity {
     class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         private final WeakReference<ImageView> imageViewReference;
 
-        public ImageDownloaderTask(ImageView imageView) {
-            imageViewReference = new WeakReference<ImageView>(imageView);
+        private ImageDownloaderTask(ImageView imageView) {
+            imageViewReference = new WeakReference<>(imageView);
         }
 
         @Override
@@ -321,15 +319,13 @@ public class MainActivity extends Activity {
             if (isCancelled()) {
                 bitmap = null;
             }
-            if (imageViewReference != null) {
-                ImageView imageView = imageViewReference.get();
-                if (imageView != null) {
-                    if (bitmap != null) {
-                        imageView.setImageBitmap(bitmap);
-                    } else {
-                        imageView.setImageDrawable(null);
-                        imageView.setVisibility(View.GONE);
-                    }
+            ImageView imageView = imageViewReference.get();
+            if (imageView != null) {
+                if (bitmap != null) {
+                    imageView.setImageBitmap(bitmap);
+                } else {
+                    imageView.setImageDrawable(null);
+                    imageView.setVisibility(View.GONE);
                 }
             }
         }
@@ -363,7 +359,7 @@ public class MainActivity extends Activity {
             throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
-        int len = -1;
+        int len ;
         while ((len = is.read(buffer)) != -1) {
             os.write(buffer, 0, len);
         }
@@ -378,7 +374,7 @@ public class MainActivity extends Activity {
 
         private List<PostModule> contactList;
 
-        public ContactAdapter(List<PostModule> contactList) {
+        private ContactAdapter(List<PostModule> contactList) {
             this.contactList = contactList;
         }
 
@@ -419,8 +415,7 @@ public class MainActivity extends Activity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Activity activity = new Activity();
-                    String url =  posts.get(position).link_URL;
+                    String url = posts.get(position).link_URL;
                     CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                     Bitmap icon = BitmapFactory
                             .decodeResource(getResources(), R.drawable.share);
@@ -444,7 +439,7 @@ public class MainActivity extends Activity {
             return new ContactViewHolder(itemView);
         }
 
-        public class ContactViewHolder extends RecyclerView.ViewHolder {
+        class ContactViewHolder extends RecyclerView.ViewHolder {
             TextView textView_title;
             ImageButton button_share;
             TextView textView_date;
@@ -455,7 +450,7 @@ public class MainActivity extends Activity {
             TextView textView_shares;
             CardView cardView;
 
-            public ContactViewHolder(View convertView) {
+            private ContactViewHolder(View convertView) {
                 super(convertView);
                 textView_title = (TextView) convertView.findViewById(R.id.textView_title);
                 button_share = (ImageButton) convertView.findViewById(R.id.button_share);
@@ -494,12 +489,12 @@ public class MainActivity extends Activity {
         startActivity(intent);*/
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         CustomTabsIntent customTabsIntent = builder.build();
-        builder.setToolbarColor(getResources().getColor(R.color.blue_300));
+        builder.setToolbarColor(ContextCompat.getColor(context, R.color.blue_300));
         customTabsIntent.launchUrl(this, Uri.parse(url));
-        Log.d("URL",url);
+        Log.d("URL", url);
     }
 
-    public void callVidioView(String url, String type) {
+    /*public void callVidioView(String url, String type) {
         Intent intent = new Intent(MainActivity.this, Custom_VideoView.class);
         intent.putExtra("url", url);
         intent.putExtra("type", type);
@@ -511,5 +506,5 @@ public class MainActivity extends Activity {
         intent.putExtra("image_json", json);
         intent.putExtra("url", url);
         startActivity(intent);
-    }
+    }*/
 }

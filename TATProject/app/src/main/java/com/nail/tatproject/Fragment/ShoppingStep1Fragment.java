@@ -571,6 +571,7 @@ public class ShoppingStep1Fragment extends Fragment {
     }
 
     private void total_save() {
+
         SharedPreferences data = getActivity().getSharedPreferences("data", 0);
         data.edit()
                 .putInt("products_sum", sum)
